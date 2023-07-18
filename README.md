@@ -25,3 +25,7 @@ POST MAIN REPO;
 
 Added cameras, shaders, Renderer API, buffers and vertex arrays.
 Rendering a triangle.
+
+## July 18, 2023, Push Nr. 2
+
+Added OrthoMovement class. Allows for very basic orthographic camera movement.
