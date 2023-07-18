@@ -60,8 +60,24 @@ namespace Core
             if (camera->GetZoom() > 0.025f)
             {
                 camera->AddZoom(-0.025f);
-                 camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
+                camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
             }
+        }
+
+        if (Input::GetMouseButton(InputMouseButton::Right))
+        {
+            Input::SetMouseMode(InputMouseMode::Captured);
+
+            MouseVector vec = Input::GetMouseDelta();
+
+            camera->GetPosition()->x += vec.x / 50;
+            camera->GetPosition()->y += vec.y / 50;
+
+            camera->UpdateView();
+        }
+        else
+        {
+            Input::SetMouseMode(InputMouseMode::Visible);
         }
     }
 }
