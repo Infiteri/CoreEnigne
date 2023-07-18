@@ -22,7 +22,6 @@ namespace Core
     {
         Logger::Init();
         LayerStack::Init();
-        Renderer::Init();
 
         s_Instance = this;
     }
@@ -64,6 +63,7 @@ namespace Core
     void Engine::StartWindow(ApplicationConfiguration *configuration)
     {
         gWindow = new Window(configuration);
+        Renderer::Init();
     }
 
     Window *Engine::GetWindow()

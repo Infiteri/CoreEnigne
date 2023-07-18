@@ -2,9 +2,18 @@
 
 #include "Core/Base.h"
 #include "Buffer/VertexArray.h"
+#include "Shader.h"
+#include "OrthographicCamera.h"
 
 namespace Core
 {
+    struct RendererState
+    {
+        Shader *mainShader;
+        OrthographicCamera *camera;
+        OrthographicCamera *currentCamera = nullptr;
+    };
+
     class CE_API Renderer
     {
     public:
@@ -30,5 +39,7 @@ namespace Core
             array->Bind();
             array->DrawVertex();
         };
+
+   static     OrthographicCamera* GetCurrentCamera();
     };
 }

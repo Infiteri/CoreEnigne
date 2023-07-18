@@ -6,6 +6,7 @@
 static Core::VertexArray *s_vertexArray;
 static Core::Shader *shader;
 static Core::OrthographicCamera *camera;
+static Core::OrthoMovement *movement;
 
 class ExampleLayer : public Core::Layer
 {
@@ -16,8 +17,6 @@ public:
     void OnAttach()
     {
         CE_INFO("Layer on attach");
-
-        camera = new Core::OrthographicCamera(Core::Engine::Get()->GetWindow()->GetWidth(), Core::Engine::Get()->GetWindow()->GetHeight(), -1.0f, 1.0f);
 
         Core::Renderer::SetClearColor(0, 0, 0.1, 0.5);
 
@@ -30,41 +29,13 @@ public:
         s_vertexArray->GenVertexBuffer(vertices, sizeof(vertices));
         s_vertexArray->AddVertexLayout(0, 0, 3);
 
-        shader = new Core::Shader("EngineResources/Shaders/Main.vs", "EngineResources/Shaders/Main.fs");
+        Core::OrthographicCamera *camera = Core::Renderer::GetCurrentCamera();
+        movement = new Core::OrthoMovement(camera, 10.0f);
     };
 
     void OnRender()
     {
-        shader->Use();
-        shader->Mat4("uProjection", camera->GetProjection()->data);
-        shader->Mat4("uView", camera->GetInvertedView()->data);
-
-        if (Core::Input::GetKey(Core::InputKey::A))
-        {
-            camera->GetPosition()->x -= 10;
-            camera->UpdateView();
-        }
-
-        if (Core::Input::GetKey(Core::InputKey::D))
-        {
-            camera->GetPosition()->x += 10;
-            camera->UpdateView();
-        }
-
-        if (Core::Input::GetKey(Core::InputKey::W))
-        {
-            camera->GetPosition()->y -= 10;
-            camera->UpdateView();
-        }
-
-        if (Core::Input::GetKey(Core::InputKey::S))
-        {
-            camera->GetPosition()->y += 10;
-            camera->UpdateView();
-        }
-
-        camera->UpdateProjection(Core::Engine::Get()->GetWindow()->GetWidth(), Core::Engine::Get()->GetWindow()->GetHeight());
-
+        movement->Update();
         Core::Renderer::SubmitVertex(s_vertexArray);
     };
 

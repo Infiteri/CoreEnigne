@@ -10,7 +10,7 @@ namespace Core
         projection = Matrix4::Identity();
         view = Matrix4::Identity();
 
-        UpdateProjection(width, height);
+        UpdateProjection(width * zoom, height * zoom);
         UpdateView();
     }
 
@@ -25,6 +25,16 @@ namespace Core
 
     void OrthographicCamera::UpdateProjection(float width, float height)
     {
-        projection = Matrix4::Ortho(0, width, 0, height, zNear, zFar);
+        projection = Matrix4::Ortho(0, width * zoom, 0, height * zoom, zNear, zFar);
     }
-} 
+
+    void OrthographicCamera::SetZoom(float value)
+    {
+        zoom = value;
+    }
+    void OrthographicCamera::AddZoom(float value)
+    {
+        zoom += value;
+    }
+
+}

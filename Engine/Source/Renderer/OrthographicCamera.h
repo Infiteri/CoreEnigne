@@ -16,6 +16,7 @@ namespace Core
 
         float zNear;
         float zFar;
+        float zoom = 1;
 
     public:
         OrthographicCamera(float width, float height, float zNear, float zFar);
@@ -31,5 +32,9 @@ namespace Core
         Matrix4 *GetView() { return view; };
 
         Matrix4 *GetInvertedView() { return Matrix4::Invert(view); };
+
+        inline float GetZoom() {return zoom;};
+        void SetZoom(float value);
+        void AddZoom(float value);
     };
 }
