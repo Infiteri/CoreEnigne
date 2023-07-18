@@ -4,6 +4,7 @@
 #include "Core/Logger.h"
 #include "stdio.h"
 #include "string.h"
+#include <tchar.h>
 
 namespace Core
 {
@@ -89,6 +90,7 @@ namespace Core
         Win32FileHandleInternal *state = (Win32FileHandleInternal *)handle->internal;
         CloseHandle(state->handle);
     }
+
 }
 
 #endif

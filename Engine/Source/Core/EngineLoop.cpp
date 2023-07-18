@@ -1,6 +1,8 @@
 #include "EngineLoop.h"
 #include "Core/Logger.h"
 #include "Core/Engine.h"
+#include "ImGuiAbstraction.h"
+#include "Renderer/Renderer.h"
 
 namespace Core
 {
@@ -8,6 +10,7 @@ namespace Core
     static bool s_Initialized = false;
     static Engine *engine;
 
+    // NOTE: EngineLoop is used for setting up the engine class, the while loop, and shutdown.
     EngineLoop::EngineLoop()
     {
     }
@@ -60,17 +63,21 @@ namespace Core
         s_Initialized = true;
 
         // Init the core of the engine
+        engine->StartWindow(instance->GetConfiguration());
         engine->Init();
+        Renderer::Viewport(engine->GetWindow()->GetWidth(), engine->GetWindow()->GetHeight());
 
         // Setup the engine
         instance->OnInit();
 
         CE_TRACE("EngineLoop: Init successful.");
+
+        ImGuiAbstraction::Begin();
     }
 
     bool EngineLoop::ShouldUpdate()
     {
-        return true;
+        return engine->GetWindow()->ShouldUpdate();
     }
 
     void EngineLoop::Update()
@@ -87,6 +94,9 @@ namespace Core
             return;
         }
 
+        // Perform important updating
+        engine->Update();
+
         instance->OnRun();
     }
 
@@ -100,10 +110,11 @@ namespace Core
 
         s_Initialized = false;
 
-        Core::Logger::Shutdown();
+        engine->Shutdown();
+
+        ImGuiAbstraction::End();
 
         instance->OnShutdown();
-
         CE_INFO("EngineLoop: Shutdown successful.");
     }
 

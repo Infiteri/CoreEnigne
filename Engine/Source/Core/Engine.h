@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Window.h"
 
 namespace Core
 {
@@ -14,5 +15,10 @@ namespace Core
         void PreInit();
         void Update();
         void Shutdown();
+
+        void StartWindow(ApplicationConfiguration *configuration);
+
+        Window *GetWindow();
+        static Engine *Get();
     };
 }

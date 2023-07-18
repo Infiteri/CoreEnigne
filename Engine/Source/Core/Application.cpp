@@ -7,7 +7,7 @@ namespace Core
     }
 
     Application::~Application()
-    {
+    { 
     }
 
     void Application::OnPreInit()
@@ -20,7 +20,7 @@ namespace Core
 
     void Application::OnRun()
     {
-    }
+    }  
 
     void Application::OnShutdown()
     {

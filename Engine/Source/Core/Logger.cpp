@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "Utils/Utils.h"
 #include "Platform/Platform.h"
+#include "Platform/FileSystem.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -9,20 +10,19 @@
 namespace Core
 {
     static bool isInitialized = false;
-    static Core::FileHandle handle;
 
     void Logger::Init()
     {
         if (isInitialized)
         {
-            return;
+            return;  
         }
 
         // Set the flag for initialized to true;
         isInitialized = true;
 
         // WIP: Create console.log file
-        handle = Platform::CreateFileHandle("Console.log");
+        FileSystem::Create("Console.log");
     }
 
     void Logger::Log(LoggingLevel level, const char *message, ...)
@@ -65,8 +65,7 @@ namespace Core
         }
 
         Platform::SetConsoleColor(color);
-
-        Platform::WriteToHandle(&handle, "%s %s\n", Levels[(int)level], OutMessage);
+        FileSystem::Write("Console.log", OutMessage);
 
         printf("%s %s\n", Levels[(int)level], OutMessage);
     }
@@ -74,7 +73,6 @@ namespace Core
     void Logger::Shutdown()
     {
         isInitialized = false;
-
-        Platform::CloseFileHandle(&handle);
     }
+
 }

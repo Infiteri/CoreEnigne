@@ -5,8 +5,8 @@ OBJ_DIR := Bin-Obj
 ASSEMBLY := Sandbox
 EXTENSION := .exe
 COMPILER_FLAGS := -g #-fPIC
-INCLUDE_FLAGS := -ISandbox\Source -IEngine/Source
-LINKER_FLAGS := -g -lEngine -L$(BUILD_DIR)
+INCLUDE_FLAGS := -ISandbox\Source -IEngine/Source -IEngine/Vendor/ImGui -IEngine/Vendor/GLFW/include -IEngine/Vendor/GLAD/include 
+LINKER_FLAGS := -g -lEngine -L$(BUILD_DIR) -lImGui -lGlad
 DEFINES := -D_DEBUG -D_CRT_SECURE_NO_WARNINGS -DCORE_WINDOWS_PLATFORM
 
 # Make does not offer a recursive wildcard function, so here's one:
@@ -20,10 +20,8 @@ all: scaffold compile link
 
 .PHONY: scaffold
 scaffold: # create build directory
-	@echo Scaffolding folder structure...
 	-@setlocal enableextensions enabledelayedexpansion && mkdir $(addprefix $(OBJ_DIR), $(DIRECTORIES)) 2>NUL || cd .
 	-@setlocal enableextensions enabledelayedexpansion && mkdir $(BUILD_DIR) 2>NUL || cd .
-	@echo Done.
 
 .PHONY: link
 link: scaffold $(OBJ_FILES) # link
@@ -32,7 +30,7 @@ link: scaffold $(OBJ_FILES) # link
 
 .PHONY: compile
 compile: #compile .cpp files
-	@echo Compiling...
+	@echo Building $(ASSEMBLY)
 
 .PHONY: clean
 clean: # clean build directory

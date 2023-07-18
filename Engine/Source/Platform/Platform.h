@@ -36,7 +36,7 @@ namespace Core
     struct FileHandle
     {
         void *internal;
-        const char* name;
+        const char *name;
     };
 
 #ifdef CORE_WINDOWS_PLATFORM
@@ -60,9 +60,10 @@ namespace Core
         /// @param name The file name;
         /// @return A file handle struct object.
         static FileHandle CreateFileHandle(const char *name);
-        static void OpenFileHandle(FileHandle* handle);
-        static void WriteToHandle(FileHandle* handle, const char* data, ...);
-        static void CloseFileHandle(FileHandle* handle);
-        static void DeleteFileFromHandle(FileHandle* handle);
+        static void OpenFileHandle(FileHandle *handle);
+        static void WriteToHandle(FileHandle *handle, const char *data, ...);
+        static void CloseFileHandle(FileHandle *handle);
+        static void DeleteFileFromHandle(FileHandle *handle);
+
     };
 }
