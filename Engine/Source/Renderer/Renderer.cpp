@@ -40,8 +40,18 @@ namespace Core
         state.camera->UpdateProjection(width, height);
     }
 
+    void Renderer::UseTransform(Transform *transform)
+    {
+        state.mainShader->Mat4("uTransform", transform->GetTransformMatrix()->data);
+    }
+
     OrthographicCamera *Renderer::GetCurrentCamera()
     {
         return state.currentCamera;
     }
-} 
+
+    Shader *Renderer::GetColorShader()
+    {
+        return state.mainShader;
+    }
+}

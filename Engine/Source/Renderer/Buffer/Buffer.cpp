@@ -97,7 +97,7 @@ namespace Core
 
     void IndexBuffer::Draw()
     {
-        glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
     uint32_t IndexBuffer::GetID()

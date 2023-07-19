@@ -51,7 +51,7 @@ namespace Core
 
         if (Input::GetKey(InputKey::Q))
         {
-            camera->AddZoom(0.025f);
+            camera->AddZoom(zoomSpeed);
             camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
         }
 
@@ -59,7 +59,7 @@ namespace Core
         {
             if (camera->GetZoom() > 0.025f)
             {
-                camera->AddZoom(-0.025f);
+                camera->AddZoom(-zoomSpeed);
                 camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
             }
         }

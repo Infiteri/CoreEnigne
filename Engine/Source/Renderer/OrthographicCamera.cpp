@@ -1,4 +1,5 @@
 #include "OrthographicCamera.h"
+#include "Core/Engine.h"
 
 namespace Core
 {
@@ -37,4 +38,13 @@ namespace Core
         zoom += value;
     }
 
+    float OrthographicCamera::GetViewExtentMaxX()
+    {
+        return position.x + Engine::Get()->GetWindow()->GetWidth() * zoom;
+    }
+
+    float OrthographicCamera::GetViewExtentMaxY()
+    {
+        return position.y + Engine::Get()->GetWindow()->GetHeight() * zoom;
+    }
 }

@@ -45,7 +45,6 @@ namespace Core
         if (indexBuffer == nullptr)
             return;
 
-        indexBuffer->Bind();
         indexBuffer->Draw();
     }
 
@@ -58,14 +57,13 @@ namespace Core
         vertexBuffer->Draw();
     }
 
+    void VertexArray::AddVertexLayout(int location, int offset, int size)
+    {
+        vertexBuffer->AddLayout(location, offset, size);
+    }
 
-void VertexArray::AddVertexLayout(int location, int offset, int size)
-{
-    vertexBuffer->AddLayout(location, offset, size);
-}
-
-uint32_t VertexArray::GetID()
-{
-return id;
-}
+    uint32_t VertexArray::GetID()
+    {
+        return id;
+    }
 }

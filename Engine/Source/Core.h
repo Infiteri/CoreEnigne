@@ -14,4 +14,5 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/OrthographicCamera.h"
 #include "Renderer/OrthoMovement.h"
+#include "Renderer/Objects/Sprite.h"
 //? ------------------------------------------------

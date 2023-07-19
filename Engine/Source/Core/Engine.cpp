@@ -9,6 +9,8 @@ namespace Core
 {
     static Window *gWindow = nullptr;
     static Engine *s_Instance;
+    static float Delta = 0.0f;
+    static double prevTime = 0.0;
 
     Engine::Engine()
     {
@@ -37,6 +39,10 @@ namespace Core
 
         s_Instance = this;
 
+        float currentTime = (float)glfwGetTime();
+        Delta = currentTime - prevTime;
+        prevTime = currentTime;
+
         // Update the systems
         Input::Update();
         LayerStack::Update();
@@ -50,6 +56,7 @@ namespace Core
         ImGuiAbstraction::PreRender();
         LayerStack::RenderImGui();
         ImGuiAbstraction::PostRender();
+
     }
 
     void Engine::Shutdown()
@@ -64,6 +71,11 @@ namespace Core
     {
         gWindow = new Window(configuration);
         Renderer::Init();
+    }
+
+    float Engine::GetDelta()
+    {
+        return Delta;
     }
 
     Window *Engine::GetWindow()

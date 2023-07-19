@@ -100,6 +100,11 @@ namespace Core
         glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, data);
     }
 
+    void Shader::Vec4(const char *name, float x, float y, float z, float w)
+    {
+        glUniform4f(GetUniformLocation(name), x, y, z, w);
+    }
+
     uint32_t Shader::GetID()
     {
         return id;

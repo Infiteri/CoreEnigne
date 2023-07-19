@@ -18,6 +18,8 @@ namespace Core
 
         void StartWindow(ApplicationConfiguration *configuration);
 
+        float GetDelta();
+
         Window *GetWindow();
         static Engine *Get();
     };

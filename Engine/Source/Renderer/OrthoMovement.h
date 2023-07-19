@@ -20,5 +20,7 @@ namespace Core
         void SetSpeed(float value);
 
         void Update();
+
+        float zoomSpeed = 0.025f;
     };
 }

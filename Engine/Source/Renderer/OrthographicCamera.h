@@ -33,8 +33,11 @@ namespace Core
 
         Matrix4 *GetInvertedView() { return Matrix4::Invert(view); };
 
-        inline float GetZoom() {return zoom;};
+        inline float GetZoom() { return zoom; };
         void SetZoom(float value);
         void AddZoom(float value);
+
+        float GetViewExtentMaxX();
+        float GetViewExtentMaxY();
     };
 }

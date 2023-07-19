@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Math/Transform.h"
 #include "Buffer/VertexArray.h"
 #include "Shader.h"
 #include "OrthographicCamera.h"
@@ -28,6 +29,10 @@ namespace Core
 
         static void Viewport(float width, float height);
 
+        /// @brief Uses the passed in transform for the upcoming draw calls, changes once this function is called again with a different transform.
+        /// @param transform The transform to use.
+        static void UseTransform(Transform* transform);
+
         static inline void SubmitIndex(VertexArray *array)
         {
             array->Bind();
@@ -40,6 +45,7 @@ namespace Core
             array->DrawVertex();
         };
 
-   static     OrthographicCamera* GetCurrentCamera();
+        static OrthographicCamera *GetCurrentCamera();
+        static Shader *GetColorShader();
     };
 }

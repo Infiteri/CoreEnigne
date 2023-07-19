@@ -66,8 +66,6 @@ namespace Core
     {
         if (lastFrameMode != MouseState.mode)
         {
-            CE_TRACE("Setting mouse mode.");
-
             lastFrameMode = MouseState.mode;
             GLFWwindow *window = Engine::Get()->GetWindow()->GetHandle();
 
