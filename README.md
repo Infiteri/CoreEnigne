@@ -58,8 +58,6 @@ Core::Application* Core::CreateApplication() {
 
 Including GLFW for the Input system. Using ImGui only if wanted, recommended.
 
-5. Run the bat file
-
 ## How to launch:
 
 1. Build. (Shown above).
