@@ -18,9 +18,19 @@ namespace Core
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // No camera = no rendering
+        if (state.currentCamera == nullptr)
+            return;
+
         state.mainShader->Use();
         state.mainShader->Mat4("uProjection", state.currentCamera->GetProjection()->data);
         state.mainShader->Mat4("uView", state.currentCamera->GetInvertedView()->data);
+
+        // Calculate the renderer's view ability
+        state.viewAbility.x = state.currentCamera->GetPosition()->x;
+        state.viewAbility.y = state.currentCamera->GetPosition()->y;
+        state.viewAbility.Width = state.currentCamera->GetViewExtentMaxX();
+        state.viewAbility.height = state.currentCamera->GetViewExtentMaxY();
     }
 
     void Renderer::Shutdown()
@@ -54,4 +64,10 @@ namespace Core
     {
         return state.mainShader;
     }
+
+    ViewAbility *Renderer::GetViewAbility()
+    {
+        return &state.viewAbility;
+    }
+
 }

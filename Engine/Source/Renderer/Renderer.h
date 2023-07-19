@@ -8,11 +8,22 @@
 
 namespace Core
 {
+
+    /// @brief What the current camera is capable of seeing.
+    struct ViewAbility
+    {
+        int x;
+        int y;
+        int Width;
+        int height;
+    };
+
     struct RendererState
     {
         Shader *mainShader;
         OrthographicCamera *camera;
         OrthographicCamera *currentCamera = nullptr;
+        ViewAbility viewAbility;
     };
 
     class CE_API Renderer
@@ -31,7 +42,7 @@ namespace Core
 
         /// @brief Uses the passed in transform for the upcoming draw calls, changes once this function is called again with a different transform.
         /// @param transform The transform to use.
-        static void UseTransform(Transform* transform);
+        static void UseTransform(Transform *transform);
 
         static inline void SubmitIndex(VertexArray *array)
         {
@@ -47,5 +58,6 @@ namespace Core
 
         static OrthographicCamera *GetCurrentCamera();
         static Shader *GetColorShader();
+        static ViewAbility *GetViewAbility();
     };
 }

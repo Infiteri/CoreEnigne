@@ -26,3 +26,5 @@ Also Added the ability to add and modify the amount of sprites that appear on th
 ###### ABOUT THE SPRITE RENDERING:
 
 ###### If the cameras view bounds are within a area with sprites only those sprites get rendered, the sprites outside do not get rendered. The "fix" is in [Sprite.cpp](Engine/Source/Renderer/Objects/Sprite.cpp) in the render function.
+
+Added a ViewAbility structure that represents the bounds of the camera's viewport, related to whichever camera the renderer is currently using while the engine is running.

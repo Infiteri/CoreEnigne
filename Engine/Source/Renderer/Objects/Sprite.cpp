@@ -42,10 +42,11 @@ namespace Core
 
     void Sprite::Render()
     {
-        OrthographicCamera *camera = Renderer::GetCurrentCamera();
+        ViewAbility *view = Renderer::GetViewAbility();
 
-        if (camera->GetPosition()->x > transform->position.x || camera->GetViewExtentMaxX() < transform->position.x ||
-            camera->GetPosition()->y > transform->position.y || camera->GetViewExtentMaxY() < transform->position.y)
+        // Dont render the sprite if not in bounds
+        if (view->x > transform->position.x || view->Width < transform->position.x ||
+            view->y > transform->position.y || view->height < transform->position.y)
             return;
 
         material->Use();

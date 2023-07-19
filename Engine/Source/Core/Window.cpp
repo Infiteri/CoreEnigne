@@ -22,7 +22,7 @@ namespace Core
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         glfwMakeContextCurrent(handle);
         glfwSetWindowPos(handle, x, y);
-        // glfwSwapInterval(1); // TODO: Maybe configurable
+        glfwSwapInterval(1); // TODO: Maybe configurable
 
         if (configuration->StartMaximized)
         {
