@@ -69,4 +69,6 @@ How to configure an application: [AppConfig](Documentation/AppConfig.md)
 
 How to add layers to your application: [Layer](Documentation/Layer.md)
 
+How to render your first sprite: [Sprite](Documentation/FisrtSprite.md)
+
 I am 14 years old if anyone cares.
