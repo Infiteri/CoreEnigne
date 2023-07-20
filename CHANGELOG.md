@@ -28,3 +28,13 @@ Also Added the ability to add and modify the amount of sprites that appear on th
 ###### If the cameras view bounds are within a area with sprites only those sprites get rendered, the sprites outside do not get rendered. The "fix" is in [Sprite.cpp](Engine/Source/Renderer/Objects/Sprite.cpp) in the render function.
 
 Added a ViewAbility structure that represents the bounds of the camera's viewport, related to whichever camera the renderer is currently using while the engine is running.
+
+Added very basic Texture support. Ability to swap textures under the same class.
+
+TODO: TextureManager / AssetManager
+
+(Pushed on July 20, 2023, no changes made when pushed since July 19, 2023);
+
+## July 20, 2023.
+
+Working on a texture API, wanna start working on a texture manager.

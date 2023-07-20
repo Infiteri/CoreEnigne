@@ -28,32 +28,7 @@ public:
 
         movement = new Core::OrthoMovement(Core::Renderer::GetCurrentCamera(), 10.0f);
 
-        const int spriteSize = 100;
-
-        for (int y = 0; y < gridSize; y++)
-        {
-            for (int x = 0; x < gridSize; x++)
-            {
-                Core::Sprite *sprite = new Core::Sprite();
-
-                sprite->GetTransform()->position.x = x * spriteSize;
-                sprite->GetTransform()->position.y = y * spriteSize;
-
-                // Calculate smooth gradient colors using lerp
-                float tX = static_cast<float>(x) / (gridSize - 1); // Percentage of completion for x
-                float tY = static_cast<float>(y) / (gridSize - 1); // Percentage of completion for y
-
-                int red = static_cast<int>(lerp(0, 255, tX));   // Varies the red component between 0 and 255
-                int green = static_cast<int>(lerp(0, 255, tY)); // Varies the green component between 0 and 255
-                int blue = 128;                                 // Constant blue component to keep it cool, you can adjust this value as desired
-
-                sprite->GetMaterial()->GetColor()->r = red;
-                sprite->GetMaterial()->GetColor()->g = green;
-                sprite->GetMaterial()->GetColor()->b = blue;
-
-                sprites.push_back(sprite);
-            }
-        }
+        sprites.push_back(new Core::Sprite());
 
         numSprites = sprites.size();
     };
@@ -72,44 +47,34 @@ public:
     {
         ImGui::Begin("Test");
         ImGui::Text("FPS: %i", (int)(1.0f / Core::Engine::Get()->GetDelta()));
-        ImGui::Text("Draw calls: %i", gridSize * gridSize);
         if (ImGui::DragFloat("Zoom", &movement->zoomSpeed))
         {
         }
 
-        if (ImGui::DragInt("GridSize", &gridSize, 1.0f, 1.0f, 50.0f))
+        static char *textures[6] = {"EngineResources/Images/crate.png", "EngineResources/Images/wall.jpg", "EngineResources/Images/wall1.jfif", "EngineResources/Images/wall2.jfif", "EngineResources/Images/wall3.jfif", "EngineResources/Images/wall4.jfif"};
+        static char *texture = textures[0];
+
+        if (ImGui::BeginCombo("Texture", texture))
         {
-            sprites.clear();
-
-            const int spriteSize = 100;
-
-            for (int y = 0; y < gridSize; y++)
+            for (int i = 0; i < 6; i++)
             {
-                for (int x = 0; x < gridSize; x++)
+                bool isSelected = false;
+
+                if (ImGui::Selectable(textures[i], isSelected))
                 {
-                    Core::Sprite *sprite = new Core::Sprite();
+                    texture = textures[i];
+                    sprites[0]->texture->Swap(texture);
+                }
 
-                    sprite->GetTransform()->position.x = x * spriteSize;
-                    sprite->GetTransform()->position.y = y * spriteSize;
-
-                    // Calculate smooth gradient colors using lerp
-                    float tX = static_cast<float>(x) / (gridSize - 1); // Percentage of completion for x
-                    float tY = static_cast<float>(y) / (gridSize - 1); // Percentage of completion for y
-
-                    int red = static_cast<int>(lerp(0, 255, tX));   // Varies the red component between 0 and 255
-                    int green = static_cast<int>(lerp(0, 255, tY)); // Varies the green component between 0 and 255
-                    int blue = 128;                                 // Constant blue component to keep it cool, you can adjust this value as desired
-
-                    sprite->GetMaterial()->GetColor()->r = red;
-                    sprite->GetMaterial()->GetColor()->g = green;
-                    sprite->GetMaterial()->GetColor()->b = blue;
-
-                    sprites.push_back(sprite);
+                if (isSelected)
+                {
+                    ImGui::SetItemDefaultFocus();
                 }
             }
 
-            numSprites = sprites.size();
+            ImGui::EndCombo();
         }
+
         ImGui::End();
     };
 };

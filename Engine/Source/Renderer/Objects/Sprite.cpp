@@ -5,10 +5,10 @@
 #include "glad/glad.h"
 
 float vertices[] = {
-    100.0f, 100.0f, 0.0f,   // top right
-    100.0f, -100.0f, 0.0f,  // bottom right
-    -100.0f, -100.0f, 0.0f, // bottom left
-    -100.0f, 100.0f, 0.0f   // top left
+    100.0f, 100.0f, 0.0f, 1.0f, 1.0f,   // top right
+    100.0f, -100.0f, 0.0f, 1.0f, 0.0f,  // bottom right
+    -100.0f, -100.0f, 0.0f, 0.0f, 0.0f, // bottom left
+    -100.0f, 100.0f, 0.0f, 0.0f, 1.0f   // top left
 };
 unsigned int indices[] = {
     // note that we start from 0!
@@ -23,12 +23,15 @@ namespace Core
         array = new VertexArray();
         transform = new Transform();
         material = new Material();
+        texture = new Texture();
+        texture->FromPath("EngineResources/Images/crate.png");
 
         array->GenIndexBuffer(indices, sizeof(indices));
         array->GetIndexBuffer()->Bind();
 
         array->GenVertexBuffer(vertices, sizeof(vertices));
         array->AddVertexLayout(0, 0, 3);
+        array->AddVertexLayout(1, 3, 2);
         array->GetVertexBuffer()->Bind();
     }
 
@@ -40,18 +43,21 @@ namespace Core
     {
     }
 
-    void Sprite::Render()
+    void Sprite::Render() 
     {
         ViewAbility *view = Renderer::GetViewAbility();
 
         // Dont render the sprite if not in bounds
-        if (view->x > transform->position.x || view->Width < transform->position.x ||
-            view->y > transform->position.y || view->height < transform->position.y)
+        // TODO: Replace 100 with width / height
+        if (view->x - 100.0f > transform->position.x || view->Width + 100.0f < transform->position.x ||
+            view->y - 100.0f > transform->position.y || view->height + 100.0f < transform->position.y)
             return;
 
         material->Use();
 
+        texture->Use(); // TODO: Material
         Renderer::UseTransform(transform);
+        Renderer::GetColorShader()->Int("uColorTexture", texture->GetGeneration());
 
         array->Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

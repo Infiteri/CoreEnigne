@@ -5,7 +5,7 @@ OBJ_DIR := Bin-Obj
 ASSEMBLY := Sandbox
 EXTENSION := .exe
 COMPILER_FLAGS := -g #-fPIC
-INCLUDE_FLAGS := -ISandbox\Source -IEngine/Source -IEngine/Vendor/ImGui -IEngine/Vendor/GLFW/include -IEngine/Vendor/GLAD/include 
+INCLUDE_FLAGS := -ISandbox\Source -IEngine/Source -IEngine/Vendor/ImGui -IEngine/Vendor/GLFW/include -IEngine/Vendor/GLAD/include -IEngine/Vendor/stb
 LINKER_FLAGS := -g -lEngine -L$(BUILD_DIR) -lImGui -lGlad
 DEFINES := -D_DEBUG -D_CRT_SECURE_NO_WARNINGS -DCORE_WINDOWS_PLATFORM
 

@@ -6,7 +6,7 @@ ASSEMBLY := Engine
 EXTENSION := .dll
 VP = Engine/Vendor
 COMPILER_FLAGS := -g #-fPIC
-INCLUDE_FLAGS := -IEngine\Source -I$(VP)/GLFW/include -I$(VP)/GLAD/include -I$(VP)/ImGui
+INCLUDE_FLAGS := -IEngine\Source -I$(VP)/GLFW/include -I$(VP)/GLAD/include -I$(VP)/ImGui -I$(VP)/stb
 LINKER_FLAGS := -g -shared -LBin -lglfw3 -lGlad -lImGui
 DEFINES := -D_DEBUG -DCORE_WINDOWS_PLATFORM -DCORE_BUILD_DLL -D_CRT_SECURE_NO_WARNINGS
 

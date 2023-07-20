@@ -105,6 +105,11 @@ namespace Core
         glUniform4f(GetUniformLocation(name), x, y, z, w);
     }
 
+    void Shader::Int(const char *name, int x)
+    {
+        glUniform1i(GetUniformLocation(name), x);
+    }
+
     uint32_t Shader::GetID()
     {
         return id;

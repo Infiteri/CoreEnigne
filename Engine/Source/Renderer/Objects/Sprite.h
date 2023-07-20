@@ -6,6 +6,7 @@
 
 #include "Renderer/Buffer/VertexArray.h"
 #include "Renderer/Material.h"
+#include "Renderer/Texture.h"
 
 namespace Core
 {
@@ -18,6 +19,7 @@ namespace Core
         Material *material;
 
     public:
+        Texture* texture;
         Sprite();
         ~Sprite();
 
