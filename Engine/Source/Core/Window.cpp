@@ -28,17 +28,6 @@ namespace Core
         {
             glfwMaximizeWindow(handle);
         }
-        else
-        {
-            // Center the window
-            GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
-            const GLFWvidmode *vidMode = glfwGetVideoMode(primaryMonitor);
-
-            int xPos = (vidMode->width - width) / 2;
-            int yPos = (vidMode->height - height) / 2;
-
-            glfwSetWindowPos(handle, xPos, yPos);
-        }
 
         glfwGetWindowSize(handle, &width, &height);
 

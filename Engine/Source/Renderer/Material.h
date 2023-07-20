@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include "Color.h"
+#include "Texture.h"
 
 namespace Core
 {
@@ -9,6 +10,7 @@ namespace Core
     {
     private:
         Color *color;
+        Texture *texture;
 
     public:
         Material();
@@ -19,5 +21,6 @@ namespace Core
         void PostUse();
 
         inline Color *GetColor() { return color; };
+        inline Texture *GetTexture() { return texture; };
     };
 }

@@ -23,8 +23,6 @@ namespace Core
         array = new VertexArray();
         transform = new Transform();
         material = new Material();
-        texture = new Texture();
-        texture->FromPath("EngineResources/Images/crate.png");
 
         array->GenIndexBuffer(indices, sizeof(indices));
         array->GetIndexBuffer()->Bind();
@@ -43,7 +41,7 @@ namespace Core
     {
     }
 
-    void Sprite::Render() 
+    void Sprite::Render()
     {
         ViewAbility *view = Renderer::GetViewAbility();
 
@@ -55,12 +53,10 @@ namespace Core
 
         material->Use();
 
-        texture->Use(); // TODO: Material
         Renderer::UseTransform(transform);
-        Renderer::GetColorShader()->Int("uColorTexture", texture->GetGeneration());
 
         array->Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        array->DrawIndex();
 
         material->PostUse();
     }

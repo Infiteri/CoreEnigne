@@ -19,7 +19,6 @@ namespace Core
         Material *material;
 
     public:
-        Texture* texture;
         Sprite();
         ~Sprite();
 

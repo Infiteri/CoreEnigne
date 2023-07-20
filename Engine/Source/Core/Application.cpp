@@ -13,7 +13,7 @@ namespace Core
     void Application::OnPreInit()
     {
     }
- 
+  
     void Application::OnInit()
     {
     }

@@ -6,6 +6,7 @@ namespace Core
     Material::Material()
     {
         color = new Color(255, 255, 255, 255);
+        texture = new Texture();
     }
 
     Material::~Material()
@@ -16,6 +17,9 @@ namespace Core
     void Material::Use()
     {
         Shader *shd = Renderer::GetColorShader();
+
+        texture->Use();
+        shd->Int("uColorTexture", texture->GetGeneration());
 
         shd->Vec4("uColor", color->GetRNormalized(), color->GetGNormalized(), color->GetBNormalized(), color->GetANormalized());
     }
