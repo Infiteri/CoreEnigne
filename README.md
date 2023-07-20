@@ -63,4 +63,10 @@ Including GLFW for the Input system. Using ImGui only if wanted, recommended.
 1. Build. (Shown above).
 2. Go in the Bin folder and run the Test.exe (or whatever name you gave it).
 
+## Documentation:
+
+How to configure an application: [AppConfig](Documentation/AppConfig.md)
+
+How to add layers to your application: [Layer](Documentation/Layer.md)
+
 I am 14 years old if anyone cares.

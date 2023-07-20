@@ -6,13 +6,6 @@
 static Core::OrthoMovement *movement;
 static std::vector<Core::Sprite *> sprites;
 int numSprites = sprites.size();
-int gridSize = 20;
-
-// Function to perform linear interpolation between two values
-float lerp(float a, float b, float t)
-{
-    return a + t * (b - a);
-}
 
 class ExampleLayer : public Core::Layer
 {
@@ -51,30 +44,6 @@ public:
         {
         }
 
-        static char *textures[6] = {"EngineResources/Images/crate.png", "EngineResources/Images/wall.jpg", "EngineResources/Images/wall1.jfif", "EngineResources/Images/wall2.jfif", "EngineResources/Images/wall3.jfif", "EngineResources/Images/wall4.jfif"};
-        static char *texture = textures[0];
-
-        if (ImGui::BeginCombo("Texture", texture))
-        {
-            for (int i = 0; i < 6; i++)
-            {
-                bool isSelected = false;
-
-                if (ImGui::Selectable(textures[i], isSelected))
-                {
-                    texture = textures[i];
-                    sprites[0]->texture->Swap(texture);
-                }
-
-                if (isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-
-            ImGui::EndCombo();
-        }
-
         ImGui::End();
     };
 };
@@ -87,7 +56,8 @@ public:
 
     void OnPreInit()
     {
-        this->p_Configuration.StartMaximized = true;
+        this->p_Configuration.StartMaximized = false;
+        this->p_Configuration.title = "Game";
     };
 
     void OnInit()

@@ -37,4 +37,6 @@ TODO: TextureManager / AssetManager
 
 ## July 20, 2023.
 
-Working on a texture API, wanna start working on a texture manager.
+Integrated the texture into the Material class.
+
+[Material.cpp](Engine/Source/Renderer/Material.cpp)
