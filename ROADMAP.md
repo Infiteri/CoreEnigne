@@ -1,8 +1,4 @@
 # The Core Game Engine RoadMap:
 
-1. Basic entities and scenes.
-2. Reusable components.
-3. More application configuration.
-4. 2D Physics using Box2D.
-5. Asset manager.
-6. Textures.
+1. Good 2D Rendering support, frame buffers and effects.
+2. 2D physics with Box2D.
