@@ -20,9 +20,17 @@ namespace Core
 {
     Sprite::Sprite()
     {
-        array = new VertexArray();
+    }
+
+    Sprite::~Sprite()
+    {
+    }
+
+    void Sprite::Init()
+    {
         transform = new Transform();
         material = new Material();
+        array = new VertexArray();
 
         array->GenIndexBuffer(indices, sizeof(indices));
         array->GetIndexBuffer()->Bind();
@@ -33,16 +41,11 @@ namespace Core
         array->GetVertexBuffer()->Bind();
     }
 
-    Sprite::~Sprite()
-    {
-    }
-
-    void Sprite::Init()
-    {
-    }
-
     void Sprite::Render()
     {
+        if (array == nullptr)
+            return;
+
         ViewAbility *view = Renderer::GetViewAbility();
 
         // Dont render the sprite if not in bounds
