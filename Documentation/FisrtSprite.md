@@ -82,3 +82,31 @@ A transform.
 The vertex array relies on OpenGL code, OpenGL gets loaded in a way thats not instantly, and that results in crashes.
 
 In the future, OpenGL code will probably be moved in a Init method but for now this is how its done.
+
+# UPDATE POST JULY 20
+
+Sprites can now be initialized outside of the OnAttach function of a layer.
+MAKE SURE YOU CALL THE SPRITE'S INIT METHOD!
+
+```c++
+
+Core::Sprite* sprite = new Core::Sprite();
+
+class ExampleLayer : public Core::Layer
+{
+public:
+    ExampleLayer(){};
+    ~ExampleLayer(){};
+
+    // Setup instances
+    void OnAttach() {
+        sprite->Init(); // VERY IMPORTANT MUST BE CALLED, NO RENDERING CAN BE DONE IF THIS IS NOT CALLED!
+    };
+
+    // Runs when any rendering can be done. Here the sprites can be rendered
+    void OnRender() {
+        sprite->Render();
+    };
+};
+
+```
