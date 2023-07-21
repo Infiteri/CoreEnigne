@@ -10,7 +10,7 @@ public:
 
     void OnPreInit()
     {
-        this->p_Configuration.StartMaximized = false;
+        this->p_Configuration.StartMaximized = true;
         this->p_Configuration.title = "Game";
     };
 

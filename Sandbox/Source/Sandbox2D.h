@@ -13,4 +13,6 @@ public:
     void OnAttach();
 
     void OnRender();
+    
+    void OnImGuiRender();
 };

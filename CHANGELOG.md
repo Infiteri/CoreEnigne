@@ -40,3 +40,13 @@ TODO: TextureManager / AssetManager
 Integrated the texture into the Material class.
 
 [Material.cpp](Engine/Source/Renderer/Material.cpp)
+
+Added documentation.
+
+## July 21, 2023.
+
+Moved sprite setup code in Init. Sprites can now be instanced outside of the OnAttach method of a layer.
+
+#### Push nr. 2.
+
+Added sizes to sprites, the ability to change them before and after Init is called.
