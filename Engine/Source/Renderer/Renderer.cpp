@@ -12,11 +12,13 @@ namespace Core
         state.mainShader = new Shader("EngineResources/Shaders/Main.vs", "EngineResources/Shaders/Main.fs");
         state.camera = new OrthographicCamera(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight(), -50.0f, 50.0f);
         state.currentCamera = state.camera;
+        state.fBuffer = new FrameBuffer();
+        state.fBuffer->Bind();
     }
 
     void Renderer::Render()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        Clear();
 
         // No camera = no rendering
         if (state.currentCamera == nullptr)
@@ -39,15 +41,36 @@ namespace Core
 
     void Renderer::SetClearColor(int r, int g, int b, int a)
     {
-        glClearColor(r, g, b, a);
+        state.colorValues.x = r;
+        state.colorValues.y = g;
+        state.colorValues.z = b;
+        state.colorValues.w = a;
     }
 
     void Renderer::Viewport(float width, float height)
     {
-        glViewport(0, 0, width, height);
+        state.fBuffer->Resize(width, height);
 
         // WIP: Camera state
-        state.camera->UpdateProjection(width, height);
+        state.currentCamera->UpdateProjection(width, height);
+
+        glViewport(0, 0, width, height);
+    }
+
+    void Renderer::Clear()
+    {
+        glClearColor(state.colorValues.x, state.colorValues.y, state.colorValues.z, state.colorValues.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void Renderer::SetCurrentCamera(OrthographicCamera *newCamera)
+    {
+        state.currentCamera = newCamera;
+    }
+
+    void Renderer::SetCurrentCameraDefault()
+    {
+        state.currentCamera = state.camera;
     }
 
     void Renderer::UseTransform(Transform *transform)
@@ -70,4 +93,21 @@ namespace Core
         return &state.viewAbility;
     }
 
+    FrameBuffer *Renderer::GetFrameBuffer()
+    {
+        return state.fBuffer;
+    }
+
+    void Renderer::BeginFrame()
+    {
+        state.fBuffer->Bind();
+        state.mainShader->Use();
+        Clear();
+    }
+
+    void Renderer::EndFrame()
+    {
+        // Submit
+        state.fBuffer->Unbind();
+    }
 }

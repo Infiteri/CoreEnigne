@@ -16,7 +16,6 @@ namespace Core
         VertexArray *array;
 
         // DONE: Getters
-        Transform *transform;
         Material *material;
 
         float width = 100;
@@ -34,11 +33,10 @@ namespace Core
         /// @param height The sprites new height.
         void SetSize(float width, float height);
 
-        void Render();
+        void Render(Transform* bounds);
 
         void Update();
 
-        inline Transform *GetTransform() { return transform; };
         inline Material *GetMaterial() { return material; };
 
         inline float GetWidth() { return width; };

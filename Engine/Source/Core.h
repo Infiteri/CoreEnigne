@@ -16,3 +16,7 @@
 #include "Renderer/OrthoMovement.h"
 #include "Renderer/Objects/Sprite.h"
 //? ------------------------------------------------
+
+//? - Scene ----------------------------------------
+#include "Scene/Scene.h"
+//? ------------------------------------------------

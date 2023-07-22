@@ -48,15 +48,15 @@ namespace Core
         LayerStack::Update();
 
         // Scene rendering
+        Renderer::BeginFrame();
         Renderer::Render();
-
         LayerStack::Render();
+        Renderer::EndFrame();
 
         // ImGui
         ImGuiAbstraction::PreRender();
         LayerStack::RenderImGui();
         ImGuiAbstraction::PostRender();
-
     }
 
     void Engine::Shutdown()

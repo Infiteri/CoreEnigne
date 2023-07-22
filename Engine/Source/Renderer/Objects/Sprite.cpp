@@ -31,7 +31,9 @@ namespace Core
 
     void Sprite::Init()
     {
-        transform = new Transform();
+        if (isInitialized)
+            return;
+
         material = new Material();
         array = new VertexArray();
 
@@ -87,7 +89,7 @@ namespace Core
         }
     }
 
-    void Sprite::Render()
+    void Sprite::Render(Transform *bounds)
     {
         if (!isInitialized)
         {
@@ -95,20 +97,18 @@ namespace Core
             return;
         }
 
-        if (array == nullptr)
+        if (array == nullptr || bounds == nullptr)
             return;
 
         ViewAbility *view = Renderer::GetViewAbility();
 
         // Dont render the sprite if not in bounds
         // DONE: Replace 100 with width / height
-        if (view->x - this->width > transform->position.x || view->Width + this->width < transform->position.x ||
-            view->y - this->height > transform->position.y || view->height + this->height < transform->position.y)
+        if (view->x - this->width > bounds->position.x || view->Width + this->width < bounds->position.x ||
+            view->y - this->height > bounds->position.y || view->height + this->height < bounds->position.y)
             return;
 
         material->Use();
-
-        Renderer::UseTransform(transform);
 
         array->Bind();
         array->DrawIndex();

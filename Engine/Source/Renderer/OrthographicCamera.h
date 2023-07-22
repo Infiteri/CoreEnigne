@@ -18,12 +18,16 @@ namespace Core
         float zFar;
         float zoom = 1;
 
+        float width;
+        float height;
+
     public:
         OrthographicCamera(float width, float height, float zNear, float zFar);
         ~OrthographicCamera();
 
         void UpdateView();
         void UpdateProjection(float width, float height);
+        void UpdateProjection();
 
         Vector3 *GetPosition() { return &position; };
         Matrix4 *GetProjection() { return projection; };

@@ -20,7 +20,6 @@ namespace Core
 
         texture->Use();
         shd->Int("uColorTexture", texture->GetGeneration());
-
         shd->Vec4("uColor", color->GetRNormalized(), color->GetGNormalized(), color->GetBNormalized(), color->GetANormalized());
     }
 

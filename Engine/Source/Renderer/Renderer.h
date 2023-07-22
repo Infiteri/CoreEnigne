@@ -2,9 +2,11 @@
 
 #include "Core/Base.h"
 #include "Math/Transform.h"
+#include "Math/Vector4.h"
 #include "Buffer/VertexArray.h"
 #include "Shader.h"
 #include "OrthographicCamera.h"
+#include "FrameBuffer.h"
 
 namespace Core
 {
@@ -24,6 +26,8 @@ namespace Core
         OrthographicCamera *camera;
         OrthographicCamera *currentCamera = nullptr;
         ViewAbility viewAbility;
+        FrameBuffer *fBuffer;
+        Vector4 colorValues{0, 0, 0, 0};
     };
 
     class CE_API Renderer
@@ -38,7 +42,14 @@ namespace Core
         static void Shutdown();
         static void SetClearColor(int r, int g, int b, int a);
 
+        static void BeginFrame();
+        static void EndFrame();
+
         static void Viewport(float width, float height);
+        static void Clear();
+
+        static void SetCurrentCamera(OrthographicCamera* newCamera);
+        static void SetCurrentCameraDefault();
 
         /// @brief Uses the passed in transform for the upcoming draw calls, changes once this function is called again with a different transform.
         /// @param transform The transform to use.
@@ -59,5 +70,6 @@ namespace Core
         static OrthographicCamera *GetCurrentCamera();
         static Shader *GetColorShader();
         static ViewAbility *GetViewAbility();
+        static FrameBuffer *GetFrameBuffer();
     };
 }

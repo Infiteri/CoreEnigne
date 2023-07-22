@@ -52,7 +52,7 @@ namespace Core
         if (Input::GetKey(InputKey::Q))
         {
             camera->AddZoom(zoomSpeed);
-            camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
+            camera->UpdateProjection();
         }
 
         if (Input::GetKey(InputKey::E))
@@ -60,24 +60,25 @@ namespace Core
             if (camera->GetZoom() > 0.025f)
             {
                 camera->AddZoom(-zoomSpeed);
-                camera->UpdateProjection(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
+                camera->UpdateProjection();
             }
         }
 
-        if (Input::GetMouseButton(InputMouseButton::Right))
-        {
-            Input::SetMouseMode(InputMouseMode::Captured);
+        // WIP
+        //  if (Input::GetMouseButton(InputMouseButton::Right))
+        //  {
+        //      Input::SetMouseMode(InputMouseMode::Captured);
 
-            MouseVector vec = Input::GetMouseDelta();
+        //     MouseVector vec = Input::GetMouseDelta();
 
-            camera->GetPosition()->x += vec.x / 50;
-            camera->GetPosition()->y += vec.y / 50;
+        //     camera->GetPosition()->x += vec.x / 50;
+        //     camera->GetPosition()->y += vec.y / 50;
 
-            camera->UpdateView();
-        }
-        else
-        {
-            Input::SetMouseMode(InputMouseMode::Visible);
-        }
+        //     camera->UpdateView();
+        // }
+        // else
+        // {
+        //     Input::SetMouseMode(InputMouseMode::Visible);
+        // }
     }
 }

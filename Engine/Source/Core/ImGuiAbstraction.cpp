@@ -33,7 +33,8 @@ namespace Core
     void ImGuiAbstraction::PostRender()
     {
         ImGuiIO &io = ImGui::GetIO();
-
+        io.DisplaySize = ImVec2(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
+    
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
