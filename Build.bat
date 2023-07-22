@@ -2,5 +2,5 @@
 CLS
 
 make -f "Engine.mak" all
-make -f "Sandbox.mak" all
-@REM make -f "Editor.mak" all
+@REM make -f "Sandbox.mak" all
+make -f "Editor.mak" all

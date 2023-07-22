@@ -50,3 +50,10 @@ Moved sprite setup code in Init. Sprites can now be instanced outside of the OnA
 #### Push nr. 2.
 
 Added sizes to sprites, the ability to change them before and after Init is called.
+
+#### Push nr. 3.
+
+Added FrameBuffers started the Editor, sandbox doesn't work yet, hopefully I will fix it.
+Started working on scenes, entities and components, don not judge my entity class pls.
+
+Small entity API and scene API, still WIP.
