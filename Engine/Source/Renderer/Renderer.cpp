@@ -66,6 +66,7 @@ namespace Core
     void Renderer::SetCurrentCamera(OrthographicCamera *newCamera)
     {
         state.currentCamera = newCamera;
+        state.currentCamera->UpdateView();
     }
 
     void Renderer::SetCurrentCameraDefault()

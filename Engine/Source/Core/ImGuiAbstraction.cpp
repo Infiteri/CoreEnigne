@@ -14,13 +14,16 @@ namespace Core
         (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Gamepad Controls
-        // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Viewport
+
+        io.Fonts->AddFontFromFileTTF("EngineResources/Fonts/Open_Sans/static/OpenSans-Bold.ttf", 11.0f);
 
         ImGui::StyleColorsDark();
         GLFWwindow *handle = static_cast<GLFWwindow *>(Engine::Get()->GetWindow()->GetHandle());
 
         ImGui_ImplGlfw_InitForOpenGL(handle, true);
         ImGui_ImplOpenGL3_Init("#version 410");
+
+        ImGuiAbstraction::SetDarkThemeColors();
     }
 
     void ImGuiAbstraction::PreRender()
@@ -34,7 +37,7 @@ namespace Core
     {
         ImGuiIO &io = ImGui::GetIO();
         io.DisplaySize = ImVec2(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight());
-    
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include <string>
 
 #ifdef CORE_WINDOWS_PLATFORM
 #include <windows.h>
@@ -65,5 +66,7 @@ namespace Core
         static void CloseFileHandle(FileHandle *handle);
         static void DeleteFileFromHandle(FileHandle *handle);
 
+        static std::string OpenFile(const char *filter);
+        static std::string SaveFile(const char *filter);
     };
 }

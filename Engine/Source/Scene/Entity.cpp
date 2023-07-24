@@ -112,4 +112,8 @@ namespace Core
         this->name = name;
     }
 
+    uint32_t Entity::GetID()
+    {
+         return id;
+    }
 }

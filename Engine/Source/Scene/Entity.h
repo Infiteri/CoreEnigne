@@ -47,12 +47,14 @@ namespace Core
         void Destroy();
 
         template <typename T>
-        void AddComponent()
+        T* AddComponent()
         {
             T *newComponent = new T;
             components.push_back(newComponent);
 
             OnComponentAdded();
+
+            return newComponent;        
         };
 
         template <typename T>
@@ -98,6 +100,6 @@ namespace Core
 
         inline const std::string &GetName() { return name; };
         void SetName(const std::string &name);
-        uint32_t GetID() { id; };
+        uint32_t GetID();
     };
 }
