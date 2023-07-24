@@ -57,3 +57,9 @@ Added FrameBuffers started the Editor, sandbox doesn't work yet, hopefully I wil
 Started working on scenes, entities and components, don not judge my entity class pls.
 
 Small entity API and scene API, still WIP.
+
+## July 22, 2023.
+
+Working on the scene Serializer / Deserializer. WIP
+
+# July 24, 2023
