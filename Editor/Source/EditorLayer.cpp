@@ -1,13 +1,18 @@
 #include "EditorLayer.h"
 #include "imgui.h"
+
+#include "Core/Input.h"
 #include "Core/Logger.h"
+
+#include "Platform/Platform.h"
+
 #include "Renderer/Renderer.h"
 #include "Renderer/OrthoMovement.h"
 #include "Renderer/Objects/Sprite.h"
 #include "Scene/Scene.h"
 #include "Scene/Entity.h"
 #include "Scene/Components.h"
-#include "Core/Input.h"
+#include "Scene/SceneSerializer.h"
 
 namespace Core
 {
@@ -26,16 +31,19 @@ namespace Core
         activeScene->Start();
 
         // Add entities
-        Entity *entity = new Entity();
-        entity->AddComponent<TransformComponent>();
-        entity->AddComponent<SpriteComponent>();
-        activeScene->AddEntity(entity);
+        // Entity *entity = new Entity();
+        // entity->AddComponent<TransformComponent>();
+        // entity->AddComponent<SpriteComponent>();
+        // activeScene->AddEntity(entity);
 
-        Entity *cameraEntity = new Entity("Camera Entity");
-        cameraEntity->AddComponent<CameraComponent>();
-        activeScene->AddEntity(cameraEntity);
+        // Entity *cameraEntity = new Entity("Camera Entity");
+        // cameraEntity->AddComponent<CameraComponent>();
+        // activeScene->AddEntity(cameraEntity);
 
         sceneHierarchyPanel = new SceneHierarchyPanel(activeScene);
+
+        SceneSerializer ser(activeScene);
+        ser.Deserialize("EngineResources/Scenes/Test.ce_scene");
     }
 
     void EditorLayer::OnRender()
@@ -56,6 +64,28 @@ namespace Core
                 activeScene->RemoveEntityByName(selection->GetName());
                 sceneHierarchyPanel->selectionContext = nullptr;
             }
+        }
+
+        // KEY_BINDS
+        bool ctrl = Input::GetKey(InputKey::LeftControl);
+        bool shift = Input::GetKey(InputKey::LeftShift);
+
+        if (Input::GetKey(InputKey::N))
+        {
+            if (ctrl)
+                New();
+        }
+
+        if (Input::GetKey(InputKey::O))
+        {
+            if (ctrl)
+                Open();
+        }
+
+        if (Input::GetKey(InputKey::S))
+        {
+            if (ctrl && shift)
+                SaveAs();
         }
     }
 
@@ -102,6 +132,30 @@ namespace Core
 
             sceneHierarchyPanel->OnImGuiRender();
             Viewport();
+
+            if (ImGui::BeginMainMenuBar())
+            {
+                if (ImGui::MenuItem("File"))
+                {
+                    ImGui::OpenPopup("FilePopup");
+                }
+
+                if (ImGui::BeginPopup("FilePopup"))
+                {
+                    if (ImGui::MenuItem("New", "Ctrl+N"))
+                        New();
+
+                    if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                        Open();
+
+                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                        SaveAs();
+
+                    ImGui::EndPopup();
+                }
+
+                ImGui::EndMainMenuBar();
+            }
 
             ImGui::End();
         }
@@ -153,5 +207,42 @@ namespace Core
             }
         }
         ImGui::End();
+    }
+
+    void EditorLayer::New()
+    {
+        activeScene = new Scene();
+    }
+
+    void EditorLayer::Open()
+    {
+
+        std::string path = Platform::OpenFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
+
+        if (!path.empty())
+        {
+            activeScene = new Scene();
+
+            SceneSerializer ser(activeScene);
+            ser.Deserialize(path);
+
+            activeScene->Init();
+            activeScene->Start();
+
+            sceneHierarchyPanel->SetContext(activeScene);
+        }
+    }
+
+    void EditorLayer::SaveAs()
+    {
+        std::string path = Platform::SaveFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
+
+        if (!path.empty())
+        {
+            SceneSerializer ser(activeScene);
+            ser.Serialize(path);
+
+            sceneHierarchyPanel->SetContext(activeScene);
+        }
     }
 }

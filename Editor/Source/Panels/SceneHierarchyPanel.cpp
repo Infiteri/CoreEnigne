@@ -178,7 +178,7 @@ namespace Core
 
     void SceneHierarchyPanel::DrawNode(Entity *e)
     {
-        ImGuiTreeNodeFlags flags = (selectionContext->GetID() == e->GetID() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+        ImGuiTreeNodeFlags flags = ((selectionContext != nullptr && selectionContext->GetID()) == e->GetID() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 
         bool open = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)e->GetID(), flags, e->GetName().c_str());
         bool removed = false;
@@ -211,14 +211,28 @@ namespace Core
         DrawUI<SpriteComponent>("Sprite", e, [](SpriteComponent *c)
                                 {
                                     // Sprite
-                                    Color* col = c->sprite.GetMaterial()->GetColor();
-                                    float color[4] = {col->GetRNormalized(),col->GetGNormalized(),col->GetBNormalized(),col->GetANormalized(),};
-                                    
-                                    if(ImGui::ColorEdit4("Color", color, ImGuiColorEditFlags_NoInputs)) {
+                                    Color *col = c->sprite.GetMaterial()->GetColor();
+                                    float color[4] = {
+                                        col->GetRNormalized(),
+                                        col->GetGNormalized(),
+                                        col->GetBNormalized(),
+                                        col->GetANormalized(),
+                                    };
+
+                                    if (ImGui::ColorEdit4("Color", color, ImGuiColorEditFlags_NoInputs))
+                                    {
                                         col->r = color[0] * 255;
                                         col->g = color[1] * 255;
                                         col->b = color[2] * 255;
                                         col->a = color[3] * 255;
+                                    }
+                                    float spriteWidth = c->sprite.GetWidth();
+                                    float spriteHeight = c->sprite.GetHeight();
+                                    float spriteSizes[2] = {spriteWidth, spriteHeight};
+
+                                    if (ImGui::DragFloat2("Size", spriteSizes, 1.0f))
+                                    {
+                                        c->sprite.SetSize(spriteSizes[0], spriteSizes[1]);
                                     } });
 
         DrawUI<CameraComponent>("Camera", e, [](CameraComponent *c)

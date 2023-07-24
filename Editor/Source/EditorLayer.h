@@ -21,6 +21,10 @@ namespace Core
 
         void Viewport();
 
+        void New();
+        void Open();
+        void SaveAs();
+
         SceneHierarchyPanel *sceneHierarchyPanel;
     };
 }
