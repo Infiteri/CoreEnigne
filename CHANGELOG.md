@@ -65,3 +65,7 @@ Working on the scene Serializer / Deserializer. WIP
 # July 24, 2023
 
 Starting a little particle system, inspired by cherno lol. WIP Still, not working with parent transform, FIX-IT!
+
+# July 25, 2023
+
+Starting work on gizmos, rotation will probably be a problem.
