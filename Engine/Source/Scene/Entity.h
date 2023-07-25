@@ -47,14 +47,17 @@ namespace Core
         void Destroy();
 
         template <typename T>
-        T* AddComponent()
+        T *AddComponent()
         {
             T *newComponent = new T;
             components.push_back(newComponent);
 
+            newComponent->parent = this;
+
+            // Notify that a component hsa been added
             OnComponentAdded();
 
-            return newComponent;        
+            return newComponent;
         };
 
         template <typename T>

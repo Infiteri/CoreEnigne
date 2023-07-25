@@ -191,6 +191,8 @@ namespace Core
         static void SetMouseMode(InputMouseMode mode);
 
         static void Update();
+
+        static bool IsMouseMoving();
     };
 
     // Internal updating

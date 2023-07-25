@@ -23,6 +23,7 @@ namespace Core
 {
     Sprite::Sprite()
     {
+        material = new Material();
     }
 
     Sprite::~Sprite()
@@ -34,7 +35,6 @@ namespace Core
         if (isInitialized)
             return;
 
-        material = new Material();
         array = new VertexArray();
 
         // Take the sizes into account.

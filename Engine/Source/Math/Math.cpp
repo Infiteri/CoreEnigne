@@ -20,7 +20,6 @@ void Core::Math::DecomposeTransform(float *data, Vector3 *translation, Vector3 *
     scale->z = data[10];
     data[10] = 1;
 
-
     // Extract rotation
     rotation->y = asin(data[8]);
     if (cos(rotation->y) != 0)
@@ -34,4 +33,9 @@ void Core::Math::DecomposeTransform(float *data, Vector3 *translation, Vector3 *
         rotation->x = atan2(-data[2], data[5]);
         rotation->z = 0;
     }
+}
+
+float Core::Math::Lerp(float start, float end, float t)
+{
+    return start + t * (end - start);
 }

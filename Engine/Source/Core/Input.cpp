@@ -25,6 +25,8 @@ namespace Core
         float deltaY;
 
         InputMouseMode mode;
+
+        bool isMoving = false;
     };
 
     static InputMouseState MouseState;
@@ -88,6 +90,16 @@ namespace Core
 
             glfwSetInputMode(window, GLFW_CURSOR, glfwMouseMode);
         }
+
+        if (MouseState.lastX != MouseState.x || MouseState.lastY != MouseState.y)
+            MouseState.isMoving = true;
+        else
+            MouseState.isMoving = false;
+    }
+
+    bool Input::IsMouseMoving()
+    {
+        return MouseState.isMoving;
     }
 
     void InputOnKeyEv(InputKey key, bool pressed)

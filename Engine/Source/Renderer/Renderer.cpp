@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Core/Engine.h"
+#include "Particle/ParticleSystem.h"
 
 #include <glad/glad.h>
 
@@ -14,6 +15,12 @@ namespace Core
         state.currentCamera = state.camera;
         state.fBuffer = new FrameBuffer();
         state.fBuffer->Bind();
+
+        // Setup OpenGL
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        ParticleSystem::Init();
     }
 
     void Renderer::Render()
@@ -33,6 +40,8 @@ namespace Core
         state.viewAbility.y = state.currentCamera->GetPosition()->y;
         state.viewAbility.Width = state.currentCamera->GetViewExtentMaxX();
         state.viewAbility.height = state.currentCamera->GetViewExtentMaxY();
+
+        ParticleSystem::Render();
     }
 
     void Renderer::Shutdown()

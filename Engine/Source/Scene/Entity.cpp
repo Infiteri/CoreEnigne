@@ -65,6 +65,17 @@ namespace Core
         {
             Renderer::UseTransform(&GetComponent<TransformComponent>()->transform);
         }
+
+        if (HasComponent<ParticleEmitterComponent>())
+        {
+            ParticleEmitterComponent *c = GetComponent<ParticleEmitterComponent>();
+
+            for (int i = 0; i < c->amountPerFrame; i++)
+            {
+                ParticleSystem::Emit(c->props);
+            }
+        }
+
         if (HasComponent<SpriteComponent>())
         {
             TransformComponent *tc = GetComponent<TransformComponent>();
@@ -72,6 +83,15 @@ namespace Core
             if (tc != nullptr)
                 GetComponent<SpriteComponent>()->sprite.Render(&tc->transform);
         }
+
+        // if (HasComponent<ParticleEmitterComponent>())
+        // {
+        //     if (HasComponent<TransformComponent>())
+        //     {
+        //         auto c = GetComponent<TransformComponent>();
+        //         auto p = GetComponent<ParticleEmitterComponent>();
+        //     }
+        // }
     }
 
     void Entity::Update()
@@ -114,6 +134,6 @@ namespace Core
 
     uint32_t Entity::GetID()
     {
-         return id;
+        return id;
     }
 }
