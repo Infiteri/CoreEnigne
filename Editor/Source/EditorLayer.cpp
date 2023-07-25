@@ -7,12 +7,16 @@
 #include "Platform/Platform.h"
 
 #include "Renderer/Renderer.h"
+#include "Renderer/Particle/ParticleSystem.h"
 #include "Renderer/OrthoMovement.h"
 #include "Renderer/Objects/Sprite.h"
 #include "Scene/Scene.h"
 #include "Scene/Entity.h"
 #include "Scene/Components.h"
 #include "Scene/SceneSerializer.h"
+
+static float begin[3] = {1, 1, 1};
+static float end[3] = {1, 1, 1};
 
 namespace Core
 {
@@ -43,7 +47,7 @@ namespace Core
         sceneHierarchyPanel = new SceneHierarchyPanel(activeScene);
 
         SceneSerializer ser(activeScene);
-        ser.Deserialize("EngineResources/Scenes/Test.ce_scene");
+        ser.Deserialize("EngineResources/Scenes/Tester.ce_scene");
     }
 
     void EditorLayer::OnRender()
@@ -87,6 +91,46 @@ namespace Core
             if (ctrl && shift)
                 SaveAs();
         }
+
+        // if (ctrl)
+        // {
+        //     ParticleProprieties props;
+        //     props.transform.position.x = 150;
+        //     props.transform.position.y = 150;
+        //     props.lifeTime = 1.0f;
+
+        //     props.velocity = {2.0f, 2.0f, 0.0f};
+
+        //     props.colorBegin.r = begin[0] * 255;
+        //     props.colorBegin.g = begin[1] * 255;
+        //     props.colorBegin.b = begin[2] * 255;
+
+        //     props.colorEnd.r = end[0] * 255;
+        //     props.colorEnd.g = end[1] * 255;
+        //     props.colorEnd.b = end[2] * 255;
+
+        //     ParticleSystem::Emit(props);
+        // }
+
+        // if (Input::IsMouseMoving())
+        // {
+        //     ParticleProprieties props;
+        //     props.transform.position.x = Input::GetMousePos().x - Renderer::GetCurrentCamera()->GetPosition()->x;
+        //     props.transform.position.y = Input::GetMousePos().y - Renderer::GetCurrentCamera()->GetPosition()->y;
+        //     props.lifeTime = 1.0f;
+
+        //     props.velocity = {2.0f, 2.0f, 0.0f};
+
+        //     props.colorBegin.r = begin[0] * 255;
+        //     props.colorBegin.g = begin[1] * 255;
+        //     props.colorBegin.b = begin[2] * 255;
+
+        //     props.colorEnd.r = end[0] * 255;
+        //     props.colorEnd.g = end[1] * 255;
+        //     props.colorEnd.b = end[2] * 255;
+
+        //     ParticleSystem::Emit(props);
+        // }
     }
 
     void EditorLayer::OnImGuiRender()
@@ -184,6 +228,10 @@ namespace Core
         // TODO: Props panel
         ImGui::Begin("Debug");
         Entity *cameraEntity = activeScene->GetEntityByName("Camera Entity");
+
+        ImGui::ColorEdit3("Begin", begin);
+
+        ImGui::ColorEdit3("End", end);
 
         if (ImGui::Checkbox("Camera A", &cameraA))
         {

@@ -169,6 +169,11 @@ namespace Core
                     selectionContext->AddComponent<CameraComponent>();
                     ImGui::CloseCurrentPopup();
                 }
+                if (ImGui::MenuItem("Particle Emitter"))
+                {
+                    selectionContext->AddComponent<ParticleEmitterComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
                 ImGui::EndPopup();
             }
         }
@@ -253,5 +258,12 @@ namespace Core
                                         c->camera.GetPosition()->y = camPos[1];
                                         c->camera.UpdateView();
                                     } });
+
+        DrawUI<ParticleEmitterComponent>("Particle Emitter", e, [](ParticleEmitterComponent *c)
+                                         {
+                                             ImGui::DragFloat("Amount", &c->amountPerFrame);
+
+                                             // todo: Velocity distribution, size down-scaling
+                                         });
     }
 }
