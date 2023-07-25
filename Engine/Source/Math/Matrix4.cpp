@@ -91,9 +91,9 @@ namespace Core
 
     Matrix4 *Matrix4::RotationXYZ(float rotationX, float rotationY, float rotationZ)
     {
-        Matrix4 *rX = Matrix4::RotationX(rotationX);
-        Matrix4 *rY = Matrix4::RotationY(rotationY);
-        Matrix4 *rZ = Matrix4::RotationZ(rotationZ);
+        Matrix4 *rX = Matrix4::RotationX(rotationX * (3.14 / 180));
+        Matrix4 *rY = Matrix4::RotationY(rotationY * (3.14 / 180));
+        Matrix4 *rZ = Matrix4::RotationZ(rotationZ * (3.14 / 180));
 
         return Matrix4::Multiply(Matrix4::Multiply(rZ, rY), rX);
     }

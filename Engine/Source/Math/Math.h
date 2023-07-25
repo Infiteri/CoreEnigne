@@ -17,6 +17,11 @@ namespace Core
         CE_API void DecomposeTransform(Matrix4 *m, Vector3 *translation, Vector3 *rotation, Vector3 *scale);
         CE_API void DecomposeTransform(float *data, Vector3 *translation, Vector3 *rotation, Vector3 *scale);
 
+        CE_API void DecomposePosition(float *data, Vector3 *out);
+        CE_API void DecomposeRotation(float *data, Vector3 *out);
+        CE_API void DecomposeScale(float *data, Vector3 *out, float rZ);
+
+
         CE_API float Lerp(float start, float end, float t);
     }
 }
