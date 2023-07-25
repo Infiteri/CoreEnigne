@@ -63,3 +63,5 @@ Small entity API and scene API, still WIP.
 Working on the scene Serializer / Deserializer. WIP
 
 # July 24, 2023
+
+Starting a little particle system, inspired by cherno lol. WIP Still, not working with parent transform, FIX-IT!
