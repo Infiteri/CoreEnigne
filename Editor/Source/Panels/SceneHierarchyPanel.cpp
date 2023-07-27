@@ -1,4 +1,6 @@
 #include "SceneHierarchyPanel.h"
+#include "Core/Logger.h"
+#include "Utils/Utils.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 
@@ -121,6 +123,7 @@ namespace Core
     void SceneHierarchyPanel::SetContext(Scene *scene)
     {
         this->scene = scene;
+        selectionContext = nullptr;
     }
 
     void SceneHierarchyPanel::OnImGuiRender()
@@ -164,16 +167,25 @@ namespace Core
                     selectionContext->AddComponent<SpriteComponent>();
                     ImGui::CloseCurrentPopup();
                 }
+
                 if (ImGui::MenuItem("Camera"))
                 {
                     selectionContext->AddComponent<CameraComponent>();
                     ImGui::CloseCurrentPopup();
                 }
+
+                if (ImGui::MenuItem("Script"))
+                {
+                    selectionContext->AddComponent<ScriptComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+
                 if (ImGui::MenuItem("Particle Emitter"))
                 {
                     selectionContext->AddComponent<ParticleEmitterComponent>();
                     ImGui::CloseCurrentPopup();
                 }
+
                 ImGui::EndPopup();
             }
         }
@@ -238,6 +250,20 @@ namespace Core
                                     if (ImGui::DragFloat2("Size", spriteSizes, 1.0f))
                                     {
                                         c->sprite.SetSize(spriteSizes[0], spriteSizes[1]);
+                                    }
+                                    
+                                    ImGui::Button("Texture");
+
+                                    if(ImGui::BeginDragDropTarget()) {
+                                        if(const ImGuiPayload* payload= ImGui::AcceptDragDropPayload("CONTENT_PAYLOAD")) {
+                                            const char* path = (const char*)payload->Data;
+
+                                        if(Utils::FileHasExtension(path, "png") || Utils::FileHasExtension(path, "jfif") || Utils::FileHasExtension(path, "jpeg") || Utils::FileHasExtension(path, "jpg")) {
+                                            c->sprite.GetMaterial()->GetTexture()->FromPath(path );
+                                        }
+                                    }
+                                        
+                                        ImGui::EndDragDropTarget();
                                     } });
 
         DrawUI<CameraComponent>("Camera", e, [](CameraComponent *c)
@@ -258,6 +284,15 @@ namespace Core
                                         c->camera.GetPosition()->y = camPos[1];
                                         c->camera.UpdateView();
                                     } });
+
+        DrawUI<ScriptComponent>("Script", e, [](ScriptComponent *c) { // Draw display name
+            static char classNameBuffer[256];
+            memset(classNameBuffer, 0, sizeof(classNameBuffer));
+            strcat_s(classNameBuffer, c->className.c_str());
+
+            if (ImGui::InputText("Class Name", classNameBuffer, sizeof(classNameBuffer)))
+                c->className = std::string(classNameBuffer);
+        });
 
         DrawUI<ParticleEmitterComponent>("Particle Emitter", e, [](ParticleEmitterComponent *c)
                                          {

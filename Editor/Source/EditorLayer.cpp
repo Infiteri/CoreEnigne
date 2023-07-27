@@ -1,10 +1,17 @@
 #include "EditorLayer.h"
+
 #include "imgui.h"
+#include "ImGuizmo.h"
+
+#include "Utils/Utils.h"
 
 #include "Core/Input.h"
 #include "Core/Logger.h"
+#include "Core/ImGuiAbstraction.h"
 
 #include "Platform/Platform.h"
+
+#include "Math/Math.h"
 
 #include "Renderer/Renderer.h"
 #include "Renderer/Particle/ParticleSystem.h"
@@ -15,39 +22,47 @@
 #include "Scene/Components.h"
 #include "Scene/SceneSerializer.h"
 
-static float begin[3] = {1, 1, 1};
-static float end[3] = {1, 1, 1};
-
 namespace Core
 {
-    ImVec2 lastViewport;
     bool isInViewportMouse;
-    OrthoMovement *movement;
-    Scene *activeScene;
     bool cameraA = false;
+    static ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE;
+
+    std::string currentScenePath = "";
+
+    Scene *activeScene;
+    Scene *editorScene;
+
+    ImVec2 lastViewport;
+    ImVec2 viewportBounds[2];
+
+    OrthoMovement *movement;
+    OrthographicCamera *editorCamera;
+
+    Texture *playButton;
+    Texture *stopButton;
 
     void EditorLayer::OnAttach()
     {
-        movement = new OrthoMovement(Renderer::GetCurrentCamera(), 10.0f);
+        editorCamera = new OrthographicCamera(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight(), -1.0, 1.0);
+        movement = new OrthoMovement(editorCamera, 10.0f);
+        Renderer::SetCurrentCamera(editorCamera);
 
-        activeScene = new Scene();
+        // Load textures
+        playButton = new Texture();
+        playButton->FromPath("EngineResources/Images/PlayButton.png");
+
+        stopButton = new Texture();
+        stopButton->FromPath("EngineResources/Images/StopButton.png");
+
+        editorScene = new Scene();
+
+        activeScene = editorScene;
         activeScene->Init();
         activeScene->Start();
 
-        // Add entities
-        // Entity *entity = new Entity();
-        // entity->AddComponent<TransformComponent>();
-        // entity->AddComponent<SpriteComponent>();
-        // activeScene->AddEntity(entity);
-
-        // Entity *cameraEntity = new Entity("Camera Entity");
-        // cameraEntity->AddComponent<CameraComponent>();
-        // activeScene->AddEntity(cameraEntity);
-
         sceneHierarchyPanel = new SceneHierarchyPanel(activeScene);
-
-        SceneSerializer ser(activeScene);
-        ser.Deserialize("EngineResources/Scenes/Tester.ce_scene");
+        contentBrowserPanel = new ContentBrowserPanel();
     }
 
     void EditorLayer::OnRender()
@@ -57,7 +72,250 @@ namespace Core
 
     void EditorLayer::OnUpdate()
     {
-        activeScene->Update();
+        switch (sceneState)
+        {
+        case SceneState::Edit:
+            OnEditorUpdate();
+            break;
+        case SceneState::Play:
+            OnRuntimeUpdate();
+            break;
+        }
+
+        // if (mouseX > 0 && mouseY > 0 && mouseX <= (int)viewportSize.x && mouseY <= (int)viewportSize.y)
+        // {
+        //     uint32_t data = Renderer::GetFrameBuffer()->ReadPixel(1, mouseX, mouseY);
+        //     CE_INFO("Data: %i", data);
+        // }
+    }
+
+    void EditorLayer::OnImGuiRender()
+    {
+        ImGuiAbstraction::SetupDockSpace();
+
+        sceneHierarchyPanel->OnImGuiRender();
+        contentBrowserPanel->OnImGuiRender();
+
+        Viewport();
+
+        RenderPlayStop();
+
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::MenuItem("File"))
+            {
+                ImGui::OpenPopup("FilePopup");
+            }
+
+            if (ImGui::BeginPopup("FilePopup"))
+            {
+                if (ImGui::MenuItem("New", "Ctrl+N"))
+                    New();
+
+                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                    Open();
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                    SaveAs();
+
+                ImGui::EndPopup();
+            }
+
+            ImGui::EndMainMenuBar();
+        }
+
+        ImGui::End();
+    }
+
+    void EditorLayer::Viewport()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
+        ImGui::Begin("Viewport");
+
+        auto viewportOffset = ImGui::GetCursorPos();
+
+        ImGui::PopStyleVar();
+
+        ImVec2 viewport = ImGui::GetContentRegionAvail();
+        ImVec2 mouse = ImGui::GetMousePos();
+
+        if (lastViewport.x != viewport.x || lastViewport.y != viewport.y)
+        {
+            lastViewport = viewport;
+            Renderer::Viewport(viewport.x, viewport.y);
+        }
+
+        Renderer::GetFrameBuffer()->UseColorAttachment(0);
+        ImGui::Image((void *)(uint64_t)(uint32_t)Renderer::GetFrameBuffer()->colorAttachmentsID[0], {viewport.x, viewport.y}, {0, 1}, {1, 0});
+
+        auto windowSize = ImGui::GetWindowSize();
+        auto minBounds = ImGui::GetWindowPos();
+
+        ImVec2 maxBounds = {minBounds.x + windowSize.x, minBounds.y + windowSize.y};
+        viewportBounds[0] = {minBounds.x, minBounds.y};
+        viewportBounds[1] = {maxBounds.x, maxBounds.y};
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_PAYLOAD");
+
+            if (payload)
+            {
+                const char *value = (const char *)payload->Data;
+
+                if (Utils::GetFileExtension(value) != "")
+                {
+                    // 0 when comparing means the same
+                    if (Utils::FileHasExtension(value, "ce_scene"))
+                    {
+                        OpenScene(value);
+                    }
+                }
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+
+        // ImGuizmo
+        Entity *entityContext = sceneHierarchyPanel->selectionContext;
+        OrthographicCamera *camera = Renderer::GetCurrentCamera();
+
+        if (entityContext != nullptr && camera != nullptr && entityContext->HasComponent<TransformComponent>())
+        {
+            auto tc = entityContext->GetComponent<TransformComponent>();
+            auto data = tc->transform.GetTransformMatrix()->data;
+
+            ImGuizmo::SetOrthographic(true);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+
+            ImGuizmo::Manipulate(camera->GetInvertedView()->data, camera->GetProjection()->data, operation, ImGuizmo::LOCAL, data);
+
+            if (ImGuizmo::IsUsing())
+            {
+
+                switch (operation)
+                {
+                case ImGuizmo::OPERATION::TRANSLATE:
+                    Math::DecomposePosition(data, &tc->transform.position);
+                    break;
+
+                case ImGuizmo::OPERATION::ROTATE:
+                    Math::DecomposeRotation(data, &tc->transform.rotation);
+                    break;
+
+                case ImGuizmo::OPERATION::SCALE:
+                    Math::DecomposeScale(data, &tc->transform.scale, tc->transform.rotation.z);
+                    break;
+
+                default:
+                    // TODO: Warn maybe?
+                    break;
+                }
+            }
+        }
+
+        ImGui::End();
+
+        movement->Update();
+    }
+
+    void EditorLayer::New()
+    {
+        activeScene = new Scene();
+    }
+
+    void EditorLayer::Open()
+    {
+        std::string path = Platform::OpenFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
+
+        OpenScene(path);
+    }
+
+    void EditorLayer::SaveAs()
+    {
+        std::string path = Platform::SaveFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
+
+        if (!path.empty())
+        {
+
+            SceneSerializer ser(activeScene);
+            ser.Serialize(path);
+
+            sceneHierarchyPanel->SetContext(activeScene);
+        }
+    }
+
+    void EditorLayer::RenderPlayStop()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
+        ImGui::Begin("##playStop_bar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoDecoration);
+
+        float size = 10.0f;
+
+        ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        if (ImGui::ImageButton((void *)(uintptr_t)(sceneState == SceneState::Edit ? playButton->GetID() : stopButton->GetID()), {size, size}))
+        {
+            if (sceneState == SceneState::Edit)
+                OnScenePlay();
+            else if (sceneState == SceneState::Play)
+                OnSceneStop();
+        }
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+    }
+
+    void EditorLayer::OpenScene(const std::string &path)
+    {
+        if (!path.empty())
+        {
+            if (currentScenePath.compare(path) == 0)
+                return;
+
+            activeScene->Stop();
+            activeScene->Destroy();
+
+            editorScene = new Scene();
+
+            activeScene = editorScene;
+            activeScene->Init();
+            activeScene->Start();
+
+            SceneSerializer ser(activeScene);
+            ser.Deserialize(path);
+            sceneHierarchyPanel->SetContext(activeScene);
+
+            currentScenePath = path;
+        }
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        sceneState = SceneState::Play;
+
+        activeScene = Scene::Copy(editorScene);
+        activeScene->Init();
+        activeScene->Start();
+        activeScene->OnRuntimeStart();
+
+        sceneHierarchyPanel->SetContext(activeScene);
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        sceneState = SceneState::Edit;
+
+        activeScene = editorScene;
+        activeScene->OnRuntimeStop();
+
+        Renderer::SetCurrentCamera(editorCamera);
+
+        sceneHierarchyPanel->SetContext(activeScene);
+    }
+
+    void EditorLayer::OnEditorUpdate()
+    {
 
         if (Input::GetKey(InputKey::Delete))
         {
@@ -92,205 +350,35 @@ namespace Core
                 SaveAs();
         }
 
-        // if (ctrl)
-        // {
-        //     ParticleProprieties props;
-        //     props.transform.position.x = 150;
-        //     props.transform.position.y = 150;
-        //     props.lifeTime = 1.0f;
-
-        //     props.velocity = {2.0f, 2.0f, 0.0f};
-
-        //     props.colorBegin.r = begin[0] * 255;
-        //     props.colorBegin.g = begin[1] * 255;
-        //     props.colorBegin.b = begin[2] * 255;
-
-        //     props.colorEnd.r = end[0] * 255;
-        //     props.colorEnd.g = end[1] * 255;
-        //     props.colorEnd.b = end[2] * 255;
-
-        //     ParticleSystem::Emit(props);
-        // }
-
-        // if (Input::IsMouseMoving())
-        // {
-        //     ParticleProprieties props;
-        //     props.transform.position.x = Input::GetMousePos().x - Renderer::GetCurrentCamera()->GetPosition()->x;
-        //     props.transform.position.y = Input::GetMousePos().y - Renderer::GetCurrentCamera()->GetPosition()->y;
-        //     props.lifeTime = 1.0f;
-
-        //     props.velocity = {2.0f, 2.0f, 0.0f};
-
-        //     props.colorBegin.r = begin[0] * 255;
-        //     props.colorBegin.g = begin[1] * 255;
-        //     props.colorBegin.b = begin[2] * 255;
-
-        //     props.colorEnd.r = end[0] * 255;
-        //     props.colorEnd.g = end[1] * 255;
-        //     props.colorEnd.b = end[2] * 255;
-
-        //     ParticleSystem::Emit(props);
-        // }
-    }
-
-    void EditorLayer::OnImGuiRender()
-    {
-        static bool dockingEnabled = true;
-        if (dockingEnabled)
+        if (Input::GetKey(InputKey::T))
         {
-            static bool dockspaceOpen = true;
-            static bool opt_fullscreen_persistant = true;
-            bool opt_fullscreen = opt_fullscreen_persistant;
-            static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-            ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-            if (opt_fullscreen)
-            {
-                ImGuiViewport *viewport = ImGui::GetMainViewport();
-                ImGui::SetNextWindowPos(viewport->Pos);
-                ImGui::SetNextWindowSize(viewport->Size);
-                ImGui::SetNextWindowViewport(viewport->ID);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-                window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-                window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-            }
-
-            if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-                window_flags |= ImGuiWindowFlags_NoBackground;
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-            ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-            ImGui::PopStyleVar();
-
-            if (opt_fullscreen)
-                ImGui::PopStyleVar(2);
-
-            // DockSpace
-            ImGuiIO &io = ImGui::GetIO();
-            if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-            {
-                ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-            }
-
-            sceneHierarchyPanel->OnImGuiRender();
-            Viewport();
-
-            if (ImGui::BeginMainMenuBar())
-            {
-                if (ImGui::MenuItem("File"))
-                {
-                    ImGui::OpenPopup("FilePopup");
-                }
-
-                if (ImGui::BeginPopup("FilePopup"))
-                {
-                    if (ImGui::MenuItem("New", "Ctrl+N"))
-                        New();
-
-                    if (ImGui::MenuItem("Open...", "Ctrl+O"))
-                        Open();
-
-                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-                        SaveAs();
-
-                    ImGui::EndPopup();
-                }
-
-                ImGui::EndMainMenuBar();
-            }
-
-            ImGui::End();
-        }
-    }
-
-    void EditorLayer::Viewport()
-    {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
-        ImGui::Begin("Viewport");
-        ImGui::PopStyleVar();
-
-        ImVec2 viewport = ImGui::GetContentRegionAvail();
-        ImVec2 mouse = ImGui::GetMousePos();
-
-        if (lastViewport.x != viewport.x || lastViewport.y != viewport.y)
-        {
-            lastViewport = viewport;
-            Renderer::Viewport(viewport.x, viewport.y);
+            operation = ImGuizmo::OPERATION::TRANSLATE;
         }
 
-        ImGui::Image((ImTextureID)(unsigned int)Renderer::GetFrameBuffer()->colorAttachment, {viewport.x, viewport.y}, {0, 1}, {1, 0});
-        ImGui::End();
-
-        movement->Update();
-
-        // TODO: Props panel
-        ImGui::Begin("Debug");
-        Entity *cameraEntity = activeScene->GetEntityByName("Camera Entity");
-
-        ImGui::ColorEdit3("Begin", begin);
-
-        ImGui::ColorEdit3("End", end);
-
-        if (ImGui::Checkbox("Camera A", &cameraA))
+        if (Input::GetKey(InputKey::R))
         {
-            if (cameraA)
-            {
-
-                if (cameraEntity != nullptr)
-                {
-                    CameraComponent *cam = cameraEntity->GetComponent<CameraComponent>();
-
-                    if (cam != nullptr)
-                    {
-                        Renderer::SetCurrentCamera(&cam->camera);
-                        Renderer::Viewport(lastViewport.x, lastViewport.y);
-                    }
-                }
-            }
-            else
-            {
-                Renderer::SetCurrentCameraDefault();
-            }
+            operation = ImGuizmo::OPERATION::ROTATE;
         }
-        ImGui::End();
+
+        if (Input::GetKey(InputKey::E))
+        {
+            operation = ImGuizmo::OPERATION::SCALE;
+        }
+
+        auto mp = ImGui::GetMousePos();
+        mp.x -= viewportBounds[0].x;
+        mp.y -= viewportBounds[0].y;
+
+        ImVec2 viewportSize = {viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y};
+
+        mp.y = viewportSize.y = mp.y;
+
+        int mouseX = (int)mp.x;
+        int mouseY = (int)mp.y;
     }
 
-    void EditorLayer::New()
+    void EditorLayer::OnRuntimeUpdate()
     {
-        activeScene = new Scene();
-    }
-
-    void EditorLayer::Open()
-    {
-
-        std::string path = Platform::OpenFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
-
-        if (!path.empty())
-        {
-            activeScene = new Scene();
-
-            SceneSerializer ser(activeScene);
-            ser.Deserialize(path);
-
-            activeScene->Init();
-            activeScene->Start();
-
-            sceneHierarchyPanel->SetContext(activeScene);
-        }
-    }
-
-    void EditorLayer::SaveAs()
-    {
-        std::string path = Platform::SaveFile("Core Scene (*.ce_scene)\0*.ce_scene\0");
-
-        if (!path.empty())
-        {
-            SceneSerializer ser(activeScene);
-            ser.Serialize(path);
-
-            sceneHierarchyPanel->SetContext(activeScene);
-        }
+        activeScene->Update();
     }
 }
