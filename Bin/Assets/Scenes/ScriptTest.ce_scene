@@ -1,0 +1,20 @@
+Scene: Unnamed
+Entities:
+  - Entity: 0
+    Name: Player
+    TransformComponent:
+      Position: [139.000015, 137.755112, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteComponent:
+      Color: [255, 255, 255, 255]
+      Width: 50
+      Height: 50
+      TexturePath: ""
+    ScriptComponent:
+      ClassName: Test
+  - Entity: 1
+    Name: Camera
+    CameraComponent:
+      Position: [0, 0, 0]
+      Zoom: 1

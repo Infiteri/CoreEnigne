@@ -1,0 +1,18 @@
+Scene: Unnamed
+Entities:
+  - Entity: 4
+    Name: Crate
+    TransformComponent:
+      Position: [384.999878, 190.693054, 0]
+      Rotation: [0, -0, 115.743652]
+      Scale: [1.0056473, 1, 1]
+    SpriteComponent:
+      Color: [0, 246.593399, 255, 255]
+      Width: 100
+      Height: 100
+      TexturePath: Assets/Images/crate.png
+  - Entity: 5
+    Name: GameCamera
+    CameraComponent:
+      Position: [0, 0, 0]
+      Zoom: 1

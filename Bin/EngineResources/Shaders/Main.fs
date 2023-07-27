@@ -2,13 +2,15 @@
 
 in vec2 vUVs;
 
-uniform sampler2D uST;
 uniform sampler2D uColorTexture;
 
 uniform vec4 uColor;
 
-out vec4 outColor;
+layout(location = 0) out vec4 outColor;
+layout(location = 1) out int outID;
 
 void main() {
     outColor = uColor * texture2D(uColorTexture, vUVs);
+
+    outID = 42069;
 }

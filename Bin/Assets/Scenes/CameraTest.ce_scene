@@ -1,0 +1,18 @@
+Scene: Unnamed
+Entities:
+  - Entity: 0
+    Name: Boy
+    TransformComponent:
+      Position: [384.999878, 190.693054, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteComponent:
+      Color: [255, 255, 255, 255]
+      Width: 100
+      Height: 100
+      TexturePath: Assets/Images/crate.png
+  - Entity: 1
+    Name: Crate
+    CameraComponent:
+      Position: [218, 116, 0]
+      Zoom: 0.5

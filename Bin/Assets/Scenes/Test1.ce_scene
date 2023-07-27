@@ -1,0 +1,13 @@
+Scene: Unnamed
+Entities:
+  - Entity: 2
+    Name: Empty Entity
+    TransformComponent:
+      Position: [226.000031, 162.621475, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteComponent:
+      Color: [255, 255, 255, 255]
+      Width: 100
+      Height: 100
+      TexturePath: ""
