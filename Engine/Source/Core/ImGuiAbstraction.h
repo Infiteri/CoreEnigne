@@ -16,5 +16,7 @@ namespace Core
         static void End();
 
         static void SetDarkThemeColors();
+
+        static void SetupDockSpace();
     };
 }

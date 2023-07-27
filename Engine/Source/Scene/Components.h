@@ -61,4 +61,13 @@ namespace Core
 
         bool IsType(const std::type_info &typeInfo) const override { return typeInfo == typeid(ParticleEmitterComponent); }
     };
+
+    struct ScriptComponent : public Component
+    {
+        std::string className;
+
+        ScriptComponent(){};
+
+        bool IsType(const std::type_info &typeInfo) const override { return typeInfo == typeid(ScriptComponent); }
+    };
 }

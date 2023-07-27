@@ -13,7 +13,14 @@ namespace Core
         state.mainShader = new Shader("EngineResources/Shaders/Main.vs", "EngineResources/Shaders/Main.fs");
         state.camera = new OrthographicCamera(Engine::Get()->GetWindow()->GetWidth(), Engine::Get()->GetWindow()->GetHeight(), -50.0f, 50.0f);
         state.currentCamera = state.camera;
-        state.fBuffer = new FrameBuffer();
+
+        FrameBufferSpecification specification;
+        specification.Width = 1280;
+        specification.Height = 720;
+
+        specification.Attachment = {FrameBufferTextureFiltering::Rgba8, FrameBufferTextureFiltering::RedInteger, FrameBufferTextureFiltering::Depth24Stencil8};
+
+        state.fBuffer = new FrameBuffer(specification);
         state.fBuffer->Bind();
 
         // Setup OpenGL
@@ -27,19 +34,30 @@ namespace Core
     {
         Clear();
 
-        // No camera = no rendering
-        if (state.currentCamera == nullptr)
-            return;
-
+        // If no camera is present no rendering is done, puts a empty matrix as its projection / view
         state.mainShader->Use();
-        state.mainShader->Mat4("uProjection", state.currentCamera->GetProjection()->data);
-        state.mainShader->Mat4("uView", state.currentCamera->GetInvertedView()->data);
 
-        // Calculate the renderer's view ability
-        state.viewAbility.x = state.currentCamera->GetPosition()->x;
-        state.viewAbility.y = state.currentCamera->GetPosition()->y;
-        state.viewAbility.Width = state.currentCamera->GetViewExtentMaxX();
-        state.viewAbility.height = state.currentCamera->GetViewExtentMaxY();
+        if (state.currentCamera != nullptr)
+        {
+            state.mainShader->Mat4("uProjection", state.currentCamera->GetProjection()->data);
+            state.mainShader->Mat4("uView", state.currentCamera->GetInvertedView()->data);
+
+            // Calculate the renderer's view ability
+            state.viewAbility.x = state.currentCamera->GetPosition()->x;
+            state.viewAbility.y = state.currentCamera->GetPosition()->y;
+            state.viewAbility.Width = state.currentCamera->GetViewExtentMaxX();
+            state.viewAbility.height = state.currentCamera->GetViewExtentMaxY();
+        }
+        else
+        {
+            state.mainShader->Mat4("uProjection", Matrix4::Empty()->data);
+            state.mainShader->Mat4("uView", Matrix4::Empty()->data);
+
+            state.viewAbility.x = 0;
+            state.viewAbility.y = 0;
+            state.viewAbility.Width = 0;
+            state.viewAbility.height = 0;
+        }
 
         ParticleSystem::Render();
     }
@@ -61,7 +79,8 @@ namespace Core
         state.fBuffer->Resize(width, height);
 
         // WIP: Camera state
-        state.currentCamera->UpdateProjection(width, height);
+        if (state.currentCamera != nullptr)
+            state.currentCamera->UpdateProjection(width, height);
 
         glViewport(0, 0, width, height);
     }
@@ -75,7 +94,12 @@ namespace Core
     void Renderer::SetCurrentCamera(OrthographicCamera *newCamera)
     {
         state.currentCamera = newCamera;
-        state.currentCamera->UpdateView();
+
+        if (newCamera != nullptr)
+        {
+            state.currentCamera->UpdateView();
+            state.currentCamera->UpdateProjection(state.fBuffer->specification.Width, state.fBuffer->specification.Height); //? XD
+        }
     }
 
     void Renderer::SetCurrentCameraDefault()

@@ -1,5 +1,6 @@
 #include "SceneSerializer.h"
 #include "yaml-cpp/yaml.h"
+#include "Core/Logger.h"
 #include "Renderer/Color.h"
 #include "Scene/Components.h"
 #include <fstream>
@@ -67,6 +68,8 @@ namespace Core
                 out << YAML::Key << "Color" << YAML::Value << c->sprite.GetMaterial()->GetColor();
                 out << YAML::Key << "Width" << YAML::Value << c->sprite.GetWidth();
                 out << YAML::Key << "Height" << YAML::Value << c->sprite.GetHeight();
+
+                out << YAML::Key << "TexturePath" << YAML::Value << c->sprite.GetMaterial()->GetTexture()->GetPath().c_str();
                 out << YAML::EndMap;
             }
 
@@ -79,6 +82,17 @@ namespace Core
                 out << YAML::BeginMap;
                 out << YAML::Key << "Position" << YAML::Value << c->camera.GetPosition();
                 out << YAML::Key << "Zoom" << YAML::Value << c->camera.GetZoom();
+                out << YAML::EndMap;
+            }
+
+            if (entity->HasComponent<ScriptComponent>())
+            {
+                ScriptComponent *c = entity->GetComponent<ScriptComponent>();
+
+                out << YAML::Key << "ScriptComponent";
+
+                out << YAML::BeginMap;
+                out << YAML::Key << "ClassName" << YAML::Value << c->className.c_str();
                 out << YAML::EndMap;
             }
 
@@ -136,9 +150,25 @@ namespace Core
                 if (e["SpriteComponent"])
                 {
                     auto color = e["SpriteComponent"]["Color"];
+                    auto texPath = e["SpriteComponent"]["TexturePath"];
                     SpriteComponent *c = ent->AddComponent<SpriteComponent>();
                     c->sprite.GetMaterial()->GetColor()->Set(color[0].as<float>(), color[1].as<float>(), color[2].as<float>(), color[3].as<float>());
                     c->sprite.SetSize(e["SpriteComponent"]["Width"].as<float>(), e["SpriteComponent"]["Height"].as<float>());
+
+                    if (texPath)
+                    {
+                        if (texPath.as<std::string>().compare("") == 0)
+                        {
+                        }
+                        else
+                        {
+                            c->sprite.GetMaterial()->GetTexture()->FromPath(texPath.as<std::string>().c_str());
+                        }
+                    }
+                    else
+                    {
+                        CE_ERROR("Scene Deserialization ERROR: Field of TexturePath inside a SpriteComponent map is not present. (%s)", name.c_str());
+                    }
                 }
 
                 if (e["CameraComponent"])
@@ -149,6 +179,12 @@ namespace Core
                     pos->x = e["CameraComponent"]["Position"][0].as<float>();
                     pos->y = e["CameraComponent"]["Position"][1].as<float>();
                     pos->z = e["CameraComponent"]["Position"][2].as<float>();
+                }
+
+                if (e["ScriptComponent"])
+                {
+                    ScriptComponent *c = ent->AddComponent<ScriptComponent>();
+                    c->className = e["ScriptComponent"]["ClassName"].as<std::string>();
                 }
 
                 scene->AddEntity(ent);

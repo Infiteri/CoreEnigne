@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include "stdint.h"
+#include "string"
 
 namespace Core
 {
@@ -12,6 +13,8 @@ namespace Core
         int height;
         int channels;
 
+        std::string path;
+
         uint32_t id;
         uint32_t generation;
 
@@ -19,8 +22,8 @@ namespace Core
         Texture();
         ~Texture();
 
-        void FromPath(const char *path);
-        void Swap(const char *path);
+        void FromPath(const char* path);
+        void Swap(const char* path);
 
         void Bind();
         void Unbind();
@@ -28,6 +31,7 @@ namespace Core
         void Use();
 
         inline uint32_t GetWidth() { return width; };
+        std::string GetPath();
         inline uint32_t GetHeight() { return height; };
 
         uint32_t GetID();

@@ -1,4 +1,5 @@
 //? - Core -----------------------------------------
+#include "Core/Base.h"
 #include "Core/Logger.h"
 #include "Core/Application.h"
 #include "Core/Input.h"
@@ -19,4 +20,10 @@
 
 //? - Scene ----------------------------------------
 #include "Scene/Scene.h"
+#include "Scene/Entity.h"
+//? ------------------------------------------------
+
+//? - Script ---------------------------------------
+#include "Script/EntityScript.h"
+#include "Script/ScriptEngine.h"
 //? ------------------------------------------------

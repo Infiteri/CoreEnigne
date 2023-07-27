@@ -42,11 +42,19 @@ namespace Core
 
         void Destroy();
 
+        void Restart();
+
+        void OnRuntimeStart();
+
+        void OnRuntimeStop();
+
         Entity *GetEntityByName(const std::string &searchValue);
         std::vector<Entity *> GetAllEntities();
 
         void AddEntity(Entity *entity);
 
         void RemoveEntityByName(const std::string &name);
+
+        static Scene *Copy(Scene *from);
     };
 }

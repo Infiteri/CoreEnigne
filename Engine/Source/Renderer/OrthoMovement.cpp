@@ -25,37 +25,37 @@ namespace Core
         if (camera == nullptr)
             return;
 
-        if (Input::GetKey(InputKey::W))
+        if (Input::GetKey(InputKey::Up))
         {
             camera->GetPosition()->y -= speed;
             camera->UpdateView();
         }
 
-        if (Input::GetKey(InputKey::S))
+        if (Input::GetKey(InputKey::Down))
         {
             camera->GetPosition()->y += speed;
             camera->UpdateView();
         }
 
-        if (Input::GetKey(InputKey::A))
+        if (Input::GetKey(InputKey::Left))
         {
             camera->GetPosition()->x -= speed;
             camera->UpdateView();
         }
 
-        if (Input::GetKey(InputKey::D))
+        if (Input::GetKey(InputKey::Right))
         {
             camera->GetPosition()->x += speed;
             camera->UpdateView();
         }
 
-        if (Input::GetKey(InputKey::Q))
+        if (Input::GetKey(InputKey::KP_Add))
         {
             camera->AddZoom(zoomSpeed);
             camera->UpdateProjection();
         }
 
-        if (Input::GetKey(InputKey::E))
+        if (Input::GetKey(InputKey::KP_Subtract))
         {
             if (camera->GetZoom() > 0.025f)
             {

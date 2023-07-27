@@ -18,8 +18,8 @@ namespace Core
         // DONE: Getters
         Material *material;
 
-        float width = 100;
-        float height = 100;
+        float width = 50;
+        float height = 50;
         bool isInitialized =false;
 
     public:
@@ -36,6 +36,8 @@ namespace Core
         void Render(Transform* bounds);
 
         void Update();
+
+        void Destroy();
 
         inline Material *GetMaterial() { return material; };
 

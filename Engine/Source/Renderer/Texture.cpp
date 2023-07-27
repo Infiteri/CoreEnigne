@@ -27,6 +27,7 @@ namespace Core
 
     Texture::Texture()
     {
+        path = "";
         channels = 3;
         generation = generations;
         generations++;
@@ -52,7 +53,7 @@ namespace Core
         Destroy();
     }
 
-    void Texture::FromPath(const char *path)
+    void Texture::FromPath(const char* path)
     {
         Destroy();
 
@@ -64,8 +65,16 @@ namespace Core
             return;
         }
 
+        this->path = std::string(path);
+
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
+
+
+        // Use default data
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // No distortion
+        glTexImage2D(GL_TEXTURE_2D, 0, ChannelsToGL(channels), width, height, 0, ChannelsToGL(channels), GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
         // WIP: Dynamyc texture sampling
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -73,15 +82,10 @@ namespace Core
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // Use default data
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // No distortion
-        glTexImage2D(GL_TEXTURE_2D, 0, ChannelsToGL(channels), width, height, 0, ChannelsToGL(channels), GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
         stbi_image_free(data);
     }
 
-    void Texture::Swap(const char *path)
+    void Texture::Swap(const char* path)
     {
         Destroy();
         FromPath(path);
@@ -89,21 +93,21 @@ namespace Core
 
     void Texture::Bind()
     {
-        if (channels == 4)
-        {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+        // if (channels == 4)
+        //  {
+        //      glEnable(GL_BLEND);
+        //      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //   }
 
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
     void Texture::Unbind()
     {
-        if (channels == 4)
-        {
-            glDisable(GL_BLEND);
-        }
+        // if (channels == 4)
+        //   {
+        //    glDisable(GL_BLEND);
+        // }
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -118,6 +122,11 @@ namespace Core
     {
         glActiveTexture(GL_TEXTURE0 + generation);
         Bind();
+    }
+
+    std::string Texture::GetPath()
+    {
+        return path;
     }
 
     uint32_t Texture::GetID()

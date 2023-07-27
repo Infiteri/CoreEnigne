@@ -100,7 +100,7 @@ namespace Core
     bool Input::IsMouseMoving()
     {
         return MouseState.isMoving;
-    }
+     }
 
     void InputOnKeyEv(InputKey key, bool pressed)
     {

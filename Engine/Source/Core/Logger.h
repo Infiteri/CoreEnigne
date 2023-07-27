@@ -1,14 +1,7 @@
 #pragma once
 
 #include "Base.h"
-#include "Platform/Platform.h"
 
-#define CE_LOG_INFO_COLOR Core::PlatformConsoleColor::White
-#define CE_LOG_WARN_COLOR Core::PlatformConsoleColor::Yellow
-#define CE_LOG_RED_COLOR Core::PlatformConsoleColor::Red
-#define CE_LOG_FATAL_RED_COLOR Core::PlatformConsoleColor::FatalRed
-#define CE_LOG_DEBUG_COLOR Core::PlatformConsoleColor::Blue
-#define CE_LOG_TRACE_COLOR Core::PlatformConsoleColor::Gray
 
 namespace Core
 {

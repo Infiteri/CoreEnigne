@@ -11,7 +11,7 @@ namespace Core
         projection = Matrix4::Identity();
         view = Matrix4::Identity();
 
-        UpdateProjection(width * zoom, height * zoom);
+        UpdateProjection(width, height);
         UpdateView();
     }
 
@@ -29,7 +29,7 @@ namespace Core
         this->width = width;
         this->height = height;
 
-        projection = Matrix4::Ortho(0, width * zoom, 0, height * zoom, zNear, zFar);
+        projection = Matrix4::Ortho(0, width, 0, height, zNear, zFar);
     }
 
     void OrthographicCamera::UpdateProjection()
@@ -48,11 +48,11 @@ namespace Core
 
     float OrthographicCamera::GetViewExtentMaxX()
     {
-        return position.x + Engine::Get()->GetWindow()->GetWidth() * zoom;
+        return position.x + Engine::Get()->GetWindow()->GetWidth() * 1;
     }
 
     float OrthographicCamera::GetViewExtentMaxY()
     {
-        return position.y + Engine::Get()->GetWindow()->GetHeight() * zoom;
+        return position.y + Engine::Get()->GetWindow()->GetHeight() * 1;
     }
 }

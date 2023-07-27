@@ -1,9 +1,15 @@
 #include "Engine.h"
-#include "Renderer/Renderer.h"
-#include "Core/Logger.h"
+
 #include "Core/Layer/LayerStack.h"
-#include "ImGuiAbstraction.h"
-#include "Input.h"
+#include "Core/ImGuiAbstraction.h"
+#include "Core/Input.h"
+
+#include "Core/Logger.h"
+#include "Platform/Platform.h"
+
+#include "Renderer/Renderer.h"
+
+#include "Script/ScriptEngine.h"
 
 namespace Core
 {
@@ -11,6 +17,7 @@ namespace Core
     static Engine *s_Instance;
     static float Delta = 0.0f;
     static double prevTime = 0.0;
+    static DLLLibrary library;
 
     Engine::Engine()
     {
@@ -24,6 +31,14 @@ namespace Core
     {
         Logger::Init();
         LayerStack::Init();
+
+        ScriptEngineConfiguration config;
+        config.ProjectDLLFileName = "Project.dll";
+        ScriptEngine::Init(config); // TODO: Here ?
+
+        /// Load
+        // library = Platform::LoadDLL("Project.dll");
+        // EntityScript *script = Platform::LoadClass<EntityScript>("CreateTest", &library);
 
         s_Instance = this;
     }
@@ -45,12 +60,16 @@ namespace Core
 
         // Update the systems
         Input::Update();
-        LayerStack::Update();
 
         // Scene rendering
         Renderer::BeginFrame();
         Renderer::Render();
         LayerStack::Render();
+
+        // Updating
+        ScriptEngine::Update();
+        LayerStack::Update();
+
         Renderer::EndFrame();
 
         // ImGui

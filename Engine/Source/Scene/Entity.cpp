@@ -113,6 +113,12 @@ namespace Core
 
         CE_TRACE("Entity Destroy: %s", name.c_str());
 
+        if (HasComponent<SpriteComponent>())
+        {
+            auto c = GetComponent<SpriteComponent>();
+            c->sprite.Destroy();
+        }
+
         for (Component *c : components)
         {
             delete c;
@@ -124,7 +130,9 @@ namespace Core
     void Entity::OnComponentAdded()
     {
         if (HasComponent<SpriteComponent>())
+        {
             GetComponent<SpriteComponent>()->sprite.Init();
+        }
     }
 
     void Entity::SetName(const std::string &name)
