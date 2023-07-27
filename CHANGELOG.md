@@ -68,4 +68,6 @@ Starting a little particle system, inspired by cherno lol. WIP Still, not workin
 
 # July 25, 2023
 
-Starting work on gizmos, rotation will probably be a problem.
+Starting work on gizmos, rotation will probably be a problem. ALMOST DONE! Most of the basics are in place.
+
+Will start to work on the editor camera and "play" camera. Play camera will make sense once a scene runtime exists.
